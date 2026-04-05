@@ -1,25 +1,30 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, Link } from "@builder.io/qwik-city";
-import { getDb, services } from "~/db";
+import { getDb, services, serviceCategories } from "~/db";
 import { LuArrowRight } from "@qwikest/icons/lucide";
 
 export const useServices = routeLoader$(async (event) => {
   const db = getDb(event.env);
-  const rows = await db.select().from(services).orderBy(services.category, services.title);
 
-  const categories: Record<string, typeof rows> = {
-    "Quirúrgicos": [],
-    "Reparadoras": [],
-    "No Quirúrgicos": [],
-  };
+  // Fetch categories in defined order
+  const cats = await db
+    .select()
+    .from(serviceCategories)
+    .orderBy(serviceCategories.sortOrder, serviceCategories.name);
 
-  for (const row of rows) {
-    if (categories[row.category]) {
-      categories[row.category].push(row);
-    }
-  }
+  // Fetch all services
+  const rows = await db
+    .select()
+    .from(services)
+    .orderBy(services.title);
 
-  return categories;
+  // Group services by category, preserving category order
+  const grouped = cats.map((cat) => ({
+    name: cat.name,
+    items: rows.filter((r) => r.category === cat.name),
+  }));
+
+  return grouped;
 });
 
 export default component$(() => {
@@ -38,10 +43,10 @@ export default component$(() => {
       </div>
 
       <div class="space-y-24">
-        {Object.entries(categories).map(([category, items]) => (
-          <section key={category} id={category.toLowerCase().replace(/\s/g, "-")}>
+        {categories.map(({ name, items }) => (
+          <section key={name} id={name.toLowerCase().replace(/\s/g, "-")}>
             <h2 class="text-2xl font-bold text-slate-900 mb-8 border-b border-slate-200 pb-4">
-              {category}
+              {name}
             </h2>
 
             {items.length === 0 ? (

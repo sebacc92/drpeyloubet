@@ -9,6 +9,13 @@ export const users = sqliteTable("users", {
   lastLogin: integer("last_login", { mode: "timestamp" }),
 });
 
+// ─── Service Categories ─────────────────────────────────
+export const serviceCategories = sqliteTable("service_categories", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull().unique(),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
 // ─── Services ────────────────────────────────────────────
 export const services = sqliteTable("services", {
   id: integer("id").primaryKey({ autoIncrement: true }),

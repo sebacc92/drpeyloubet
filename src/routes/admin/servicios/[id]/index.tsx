@@ -7,10 +7,10 @@ import {
   server$,
 } from "@builder.io/qwik-city";
 import { eq } from "drizzle-orm";
-import { getDb, services, serviceImages } from "~/db";
+import { getDb, services, serviceImages, serviceCategories } from "~/db";
 import { LuArrowLeft, LuUpload, LuTrash2, LuLoader2 } from "@qwikest/icons/lucide";
 
-// ─── Loader: fetch service + images ──────────────────────
+// ─── Loader: fetch service + images + categories ─────────
 export const useServiceData = routeLoader$(async (event) => {
   const db = getDb(event.env);
   const id = Number(event.params.id);
@@ -30,7 +30,12 @@ export const useServiceData = routeLoader$(async (event) => {
     .from(serviceImages)
     .where(eq(serviceImages.serviceId, id));
 
-  return { service, images };
+  const categories = await db
+    .select()
+    .from(serviceCategories)
+    .orderBy(serviceCategories.sortOrder, serviceCategories.name);
+
+  return { service, images, categories };
 });
 
 // ─── Action: update service fields ───────────────────────
@@ -83,7 +88,7 @@ export default component$(() => {
   const data = useServiceData();
   const updateAction = useUpdateService();
   const deleteImageAction = useDeleteImage();
-  const { service, images: initialImages } = data.value;
+  const { service, images: initialImages, categories } = data.value;
 
   const uploading = useSignal(false);
   const uploadError = useSignal("");
@@ -176,9 +181,9 @@ export default component$(() => {
                 id="category"
                 class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
               >
-                {["Quirúrgicos", "Reparadoras", "No Quirúrgicos"].map((cat) => (
-                  <option key={cat} value={cat} selected={service.category === cat}>
-                    {cat}
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.name} selected={service.category === cat.name}>
+                    {cat.name}
                   </option>
                 ))}
               </select>
@@ -195,7 +200,7 @@ export default component$(() => {
               rows={3}
               class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
             >
-              {service.description}
+              {service.description ?? ""}
             </textarea>
           </div>
 
@@ -209,7 +214,7 @@ export default component$(() => {
               rows={8}
               class="mt-1 block w-full rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2 font-mono text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
             >
-              {service.contentHtml}
+              {service.contentHtml ?? ""}
             </textarea>
           </div>
 

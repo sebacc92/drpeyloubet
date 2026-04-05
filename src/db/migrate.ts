@@ -66,6 +66,26 @@ async function main() {
     console.log("ℹ️  Admin user already exists.");
   }
 
+  // Seed default categories
+  const catRes = await client.execute("SELECT count(*) as cnt FROM service_categories");
+  const catCount = catRes.rows[0].cnt as number;
+  if (catCount === 0) {
+    const defaultCategories = [
+      { name: "Quirúrgicos", sort_order: 1 },
+      { name: "Reparadoras", sort_order: 2 },
+      { name: "No Quirúrgicos", sort_order: 3 },
+    ];
+    for (const cat of defaultCategories) {
+      await client.execute({
+        sql: "INSERT INTO service_categories (name, sort_order) VALUES (?, ?)",
+        args: [cat.name, cat.sort_order],
+      });
+    }
+    console.log(`✅ ${defaultCategories.length} default categories seeded.`);
+  } else {
+    console.log(`ℹ️  Categories already exist (${catCount}).`);
+  }
+
   // Seed dummy services
   const servRes = await client.execute("SELECT count(*) as cnt FROM services");
   const count = servRes.rows[0].cnt as number;

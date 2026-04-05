@@ -5,12 +5,18 @@ CREATE TABLE IF NOT EXISTS users (
   last_login TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS service_categories (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
 CREATE TABLE IF NOT EXISTS services (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   slug TEXT NOT NULL UNIQUE,
   title TEXT NOT NULL,
   description TEXT,
-  category TEXT CHECK(category IN ('Quirúrgicos', 'Reparadoras', 'No Quirúrgicos')) NOT NULL,
+  category TEXT NOT NULL,
   content_html TEXT
 );
 
