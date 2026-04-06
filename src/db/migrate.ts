@@ -71,14 +71,14 @@ async function main() {
   const catCount = catRes.rows[0].cnt as number;
   if (catCount === 0) {
     const defaultCategories = [
-      { name: "Quirúrgicos", sort_order: 1 },
-      { name: "Reparadoras", sort_order: 2 },
-      { name: "No Quirúrgicos", sort_order: 3 },
+      { name: "Quirúrgicos", description: "Procedimientos quirúrgicos estéticos y reconstructivos.", sort_order: 1 },
+      { name: "Reparadoras", description: "Cirugías reparadoras y reconstructivas.", sort_order: 2 },
+      { name: "No Quirúrgicos", description: "Tratamientos estéticos no invasivos.", sort_order: 3 },
     ];
     for (const cat of defaultCategories) {
       await client.execute({
-        sql: "INSERT INTO service_categories (name, sort_order) VALUES (?, ?)",
-        args: [cat.name, cat.sort_order],
+        sql: "INSERT INTO service_categories (name, description, sort_order) VALUES (?, ?, ?)",
+        args: [cat.name, cat.description, cat.sort_order],
       });
     }
     console.log(`✅ ${defaultCategories.length} default categories seeded.`);

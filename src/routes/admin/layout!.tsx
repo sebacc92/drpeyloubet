@@ -17,6 +17,13 @@ export default component$(() => {
               Panel Admin
             </Link>
 
+            <Link
+              href="/admin/contenido/"
+              class="text-sm text-slate-300 hover:text-white transition-colors"
+            >
+              Contenido Home
+            </Link>
+
             <div class="flex items-center gap-4">
               <a
                 href="/"

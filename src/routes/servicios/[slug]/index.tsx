@@ -89,7 +89,7 @@ export default component$(() => {
             </p>
           </div>
           <a
-            href="https://wa.link/yourlink"
+            href="https://wa.me/5492216013259"
             target="_blank"
             rel="noopener noreferrer"
             class="whitespace-nowrap rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"

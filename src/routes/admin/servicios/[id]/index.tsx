@@ -48,6 +48,7 @@ export const useUpdateService = routeAction$(async (data, event) => {
     .set({
       title: data.title as string,
       description: data.description as string,
+      highlights: ((data.highlights as string) ?? "").trim(),
       category: data.category as string,
       contentHtml: data.content_html as string,
     })
@@ -201,6 +202,22 @@ export default component$(() => {
               class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
             >
               {service.description ?? ""}
+            </textarea>
+          </div>
+
+          <div>
+            <label for="highlights" class="block text-sm font-medium text-slate-700">
+              Puntos Destacados
+            </label>
+            <p class="text-xs text-slate-400 mb-1">Un punto por línea. Se muestran como lista en la tarjeta del servicio.</p>
+            <textarea
+              name="highlights"
+              id="highlights"
+              rows={4}
+              placeholder={"Resultados naturales\nRecuperación rápida\nTécnicas avanzadas"}
+              class="mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+            >
+              {service.highlights ?? ""}
             </textarea>
           </div>
 

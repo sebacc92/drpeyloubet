@@ -5,9 +5,15 @@ CREATE TABLE IF NOT EXISTS users (
   last_login TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS site_settings (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL DEFAULT ''
+);
+
 CREATE TABLE IF NOT EXISTS service_categories (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL UNIQUE,
+  description TEXT DEFAULT '',
   sort_order INTEGER NOT NULL DEFAULT 0
 );
 
@@ -16,6 +22,7 @@ CREATE TABLE IF NOT EXISTS services (
   slug TEXT NOT NULL UNIQUE,
   title TEXT NOT NULL,
   description TEXT,
+  highlights TEXT DEFAULT '',
   category TEXT NOT NULL,
   content_html TEXT
 );

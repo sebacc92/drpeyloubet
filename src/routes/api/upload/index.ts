@@ -14,7 +14,7 @@ export const onPost: RequestHandler = async (event) => {
     const jsonResponse = await handleUpload({
       body,
       request: event.request,
-      onBeforeGenerateToken: async (_pathname) => {
+      onBeforeGenerateToken: async () => {
         // Auth check — the plugin@auth middleware already protects /admin,
         // but the upload endpoint is at /api/upload which is public.
         // Verify the cookie here too.

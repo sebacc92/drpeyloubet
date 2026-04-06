@@ -9,10 +9,17 @@ export const users = sqliteTable("users", {
   lastLogin: integer("last_login", { mode: "timestamp" }),
 });
 
+// ─── Site Settings (key-value) ───────────────────────────
+export const siteSettings = sqliteTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull().default(""),
+});
+
 // ─── Service Categories ─────────────────────────────────
 export const serviceCategories = sqliteTable("service_categories", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull().unique(),
+  description: text("description").default(""),
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
@@ -22,6 +29,7 @@ export const services = sqliteTable("services", {
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   description: text("description"),
+  highlights: text("highlights").default(""),
   category: text("category").notNull(),
   contentHtml: text("content_html"),
 });
