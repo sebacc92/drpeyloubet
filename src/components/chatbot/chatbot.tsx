@@ -1,5 +1,5 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
-import { LuMessageCircle, LuX, LuSend } from "@qwikest/icons/lucide";
+import { LuMessageCircle, LuX, LuSend, LuBot } from "@qwikest/icons/lucide";
 
 export const Chatbot = component$(() => {
   const isOpen = useSignal(false);
@@ -47,18 +47,20 @@ export const Chatbot = component$(() => {
   return (
     <>
       {/* Botón Flotante */}
-      <div class="fixed bottom-6 right-6 z-50 flex items-center justify-center">
+      <div class="fixed bottom-6 right-6 z-50 flex items-center justify-center group">
         {!isOpen.value && (
-          <div class="absolute -top-1 -right-1 flex h-4 w-4 z-10">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-500 border-2 border-slate-900"></span>
+          <div class="absolute right-full mr-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-slate-900 text-white text-[13px] font-medium px-4 py-2.5 rounded-2xl whitespace-nowrap shadow-xl pointer-events-none translate-x-4 group-hover:translate-x-0 after:content-[''] after:absolute after:top-1/2 after:left-full after:-translate-y-1/2 after:border-8 after:border-transparent after:border-l-slate-900">
+            Hola, soy el asistente virtual, estoy aquí para ayudarte
           </div>
         )}
         <button 
           onClick$={() => isOpen.value = !isOpen.value}
-          class={`relative p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 ${isOpen.value ? 'bg-slate-800 text-stone-50' : 'bg-slate-900 text-stone-50'}`}
+          class={`relative p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 ${isOpen.value ? 'bg-slate-800 text-stone-50' : 'bg-white text-blue-950 border border-stone-100'}`}
         >
-          {isOpen.value ? <LuX class="w-6 h-6" /> : <LuMessageCircle class="w-6 h-6" />}
+          {!isOpen.value && (
+            <span class="animate-ping absolute inset-0 rounded-full bg-white opacity-60"></span>
+          )}
+          {isOpen.value ? <LuX class="w-6 h-6 relative z-10" /> : <LuBot class="w-6 h-6 relative z-10" />}
         </button>
       </div>
 

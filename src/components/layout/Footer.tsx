@@ -6,7 +6,7 @@ export const Footer = component$(() => {
     <footer class="bg-slate-900 py-12 text-slate-300">
       <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 mb-12">
-          
+
           {/* ─── Contact Info ─── */}
           <div class="space-y-8">
             <div>
@@ -51,7 +51,7 @@ export const Footer = component$(() => {
               </div>
             </div>
           </div>
-          
+
           {/* ─── Map ─── */}
           <div class="w-full rounded-2xl bg-slate-800/50 border border-slate-700 overflow-hidden flex flex-col h-full min-h-[400px]">
             <div class="p-6 shrink-0">
@@ -73,16 +73,16 @@ export const Footer = component$(() => {
               />
             </div>
           </div>
-          
+
         </div>
-        
+
         {/* ─── Copyright ─── */}
         <div class="mt-8 border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p class="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} Dr. Daniel Lafranconi y Sergio Pagani. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Dr. Daniel Lafranconi y Dr. Sergio Pagani. Todos los derechos reservados.
           </p>
           <p class="text-sm text-slate-500">
-            Desarrollado por <a href="https://cleverisma.com" target="_blank" rel="noopener noreferrer" class="font-semibold text-rose-300 hover:text-rose-200 transition-colors">cleverisma</a>
+            Desarrollado por <a href="https://cleverisma.com" target="_blank" rel="noopener noreferrer" class="font-semibold text-rose-300 hover:text-rose-200 transition-colors">Cleverisma</a>
           </p>
         </div>
       </div>
