@@ -60,6 +60,7 @@
     "@libsql/client": "^0.17.2",
     "@vercel/blob": "^2.3.3",
     "cssnano": "^7.1.4",
-    "drizzle-orm": "^0.45.2"
+    "drizzle-orm": "^0.45.2",
+    "openai": "^6.34.0"
   }
 }

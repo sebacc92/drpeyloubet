@@ -18,21 +18,18 @@ export const Navbar = component$(() => {
       <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link href="/" class="flex items-center">
-          <img
-            src="/logo.png"
-            alt="Dr. Rodriguez Peyloubet - Cirugía Plástica y Reparadora"
-            width={220}
-            height={44}
-            class="h-10 w-auto sm:h-11"
-          />
+          <span class="text-xl font-serif font-bold text-slate-800">
+            Dr. Lafranconi & Dr. Pagani
+          </span>
         </Link>
 
         {/* Desktop nav */}
         <nav class="hidden md:flex items-center gap-8 text-base font-medium text-slate-700">
           <Link href="/" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Inicio</Link>
+          <Link href="/#equipo" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Nosotros</Link>
           <Link href="/servicios" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Servicios</Link>
           <a
-            href="https://wa.me/5492216013259"
+            href="https://wa.me/5492235569988"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-base font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/25 shadow-sm"
@@ -82,6 +79,13 @@ export const Navbar = component$(() => {
             Inicio
           </Link>
           <Link
+            href="/#equipo"
+            onClick$={closeMenu}
+            class="rounded-xl px-4 py-3 text-lg font-medium text-slate-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+          >
+            Nosotros
+          </Link>
+          <Link
             href="/servicios"
             onClick$={closeMenu}
             class="rounded-xl px-4 py-3 text-lg font-medium text-slate-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -92,7 +96,7 @@ export const Navbar = component$(() => {
           <div class="my-4 border-t border-slate-100" />
 
           <a
-            href="https://wa.me/5492216013259"
+            href="https://wa.me/5492235569988"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-lg font-semibold text-white transition-all hover:bg-blue-700 shadow-sm"

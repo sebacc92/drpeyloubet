@@ -6,27 +6,31 @@ import {
   Link,
 } from "@builder.io/qwik-city";
 import { eq } from "drizzle-orm";
-import { getDb, services, serviceCategories } from "~/db";
+import { getDb, services, categories } from "~/db";
 import {
   LuPencil,
   LuPlus,
-  LuImage,
   LuTrash2,
   LuCheck,
   LuX,
-  LuGripVertical,
   LuTag,
   LuFilter,
-  LuExternalLink,
 } from "@qwikest/icons/lucide";
 
 // ─── Loaders ─────────────────────────────────────────────
 export const useAdminServices = routeLoader$(async (requestEvent) => {
   const db = getDb(requestEvent.env);
   const rows = await db
-    .select()
+    .select({
+      id: services.id,
+      title: services.title,
+      slug: services.slug,
+      categoryId: services.categoryId,
+      categoryName: categories.name,
+    })
     .from(services)
-    .orderBy(services.category, services.title);
+    .leftJoin(categories, eq(services.categoryId, categories.id))
+    .orderBy(categories.name, services.title);
   return rows;
 });
 
@@ -34,8 +38,8 @@ export const useCategories = routeLoader$(async (requestEvent) => {
   const db = getDb(requestEvent.env);
   const rows = await db
     .select()
-    .from(serviceCategories)
-    .orderBy(serviceCategories.sortOrder, serviceCategories.name);
+    .from(categories)
+    .orderBy(categories.name);
   return rows;
 });
 
@@ -46,25 +50,18 @@ export const useAddCategory = routeAction$(async (data, event) => {
   const description = ((data.description as string) ?? "").trim();
   if (!name) return { error: "El nombre es obligatorio" };
 
-  try {
-    // Get max sort_order
-    const existing = await db
-      .select()
-      .from(serviceCategories)
-      .orderBy(serviceCategories.sortOrder);
-    const maxOrder =
-      existing.length > 0
-        ? Math.max(...existing.map((c) => c.sortOrder))
-        : 0;
+  // create slug
+  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-    await db.insert(serviceCategories).values({
+  try {
+    await db.insert(categories).values({
       name,
+      slug,
       description,
-      sortOrder: maxOrder + 1,
     });
     return { success: true };
   } catch {
-    return { error: "Ya existe una categoría con ese nombre" };
+    return { error: "Ya existe una categoría con ese nombre o slug" };
   }
 });
 
@@ -72,18 +69,10 @@ export const useDeleteCategory = routeAction$(async (data, event) => {
   const db = getDb(event.env);
   const id = Number(data.categoryId);
 
-  // Check if any services use this category
-  const cat = await db
-    .select()
-    .from(serviceCategories)
-    .where(eq(serviceCategories.id, id))
-    .limit(1);
-  if (cat.length === 0) return { error: "Categoría no encontrada" };
-
   const usedServices = await db
     .select()
     .from(services)
-    .where(eq(services.category, cat[0].name));
+    .where(eq(services.categoryId, id));
 
   if (usedServices.length > 0) {
     return {
@@ -92,8 +81,8 @@ export const useDeleteCategory = routeAction$(async (data, event) => {
   }
 
   await db
-    .delete(serviceCategories)
-    .where(eq(serviceCategories.id, id));
+    .delete(categories)
+    .where(eq(categories.id, id));
   return { success: true };
 });
 
@@ -106,33 +95,15 @@ export const useUpdateCategory = routeAction$(async (data, event) => {
 
   if (!name) return { error: "El nombre es obligatorio" };
 
-  // Get old name to update related services
-  const [oldCat] = await db
-    .select()
-    .from(serviceCategories)
-    .where(eq(serviceCategories.id, id))
-    .limit(1);
-
-  if (!oldCat) return { error: "Categoría no encontrada" };
-
   try {
-    // Update the category name and description
     await db
-      .update(serviceCategories)
+      .update(categories)
       .set({ name, description })
-      .where(eq(serviceCategories.id, id));
-
-    // Update all services referencing the old category name
-    if (oldCat.name !== name) {
-      await db
-        .update(services)
-        .set({ category: name })
-        .where(eq(services.category, oldCat.name));
-    }
+      .where(eq(categories.id, id));
 
     return { success: true };
   } catch {
-    return { error: "Ya existe una categoría con ese nombre" };
+    return { error: "No se pudo actualizar la categoría" };
   }
 });
 
@@ -144,11 +115,11 @@ export default component$(() => {
   const deleteCategoryAction = useDeleteCategory();
   const updateCategoryAction = useUpdateCategory();
 
-  const filterCategory = useSignal<string | null>(null);
+  const filterCategory = useSignal<number | null>(null);
 
   const filteredServices = useComputed$(() => {
     if (filterCategory.value === null) return serviceList.value;
-    return serviceList.value.filter((s) => s.category === filterCategory.value);
+    return serviceList.value.filter((s) => s.categoryId === filterCategory.value);
   });
 
   const editingCategoryId = useSignal<number | null>(null);
@@ -167,7 +138,6 @@ export default component$(() => {
     editingCategoryDesc.value = "";
   });
 
-  // Reset editing state when update action completes successfully
   const lastActionVal = updateCategoryAction.value;
   if (lastActionVal?.success && editingCategoryId.value !== null) {
     editingCategoryId.value = null;
@@ -177,15 +147,30 @@ export default component$(() => {
 
   return (
     <>
+      {/* Toast Notificación para acciones */}
+      {(addCategoryAction.value?.success || updateCategoryAction.value?.success) && (
+        <div class="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-4">
+          <div class="bg-slate-900 text-stone-50 px-6 py-3 rounded-full shadow-2xl flex items-center gap-3">
+            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400">
+              <LuCheck class="w-4 h-4" />
+            </span>
+            <span class="text-sm font-semibold tracking-wide">Guardado correctamente</span>
+          </div>
+        </div>
+      )}
+
       <div class="grid gap-8 lg:grid-cols-[1fr_340px]">
         {/* ═══ Left: Services Table ═══ */}
         <div>
           <div class="mb-6 flex items-center justify-between">
             <h1 class="text-2xl font-bold text-slate-900">Servicios</h1>
-            <button class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors">
+            <Link
+              href="/admin/servicios/nuevo"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-800 transition-colors"
+            >
               <LuPlus class="h-4 w-4" />
               Nuevo Servicio
-            </button>
+            </Link>
           </div>
 
           {/* ═══ Category Filter Chips ═══ */}
@@ -195,35 +180,35 @@ export default component$(() => {
               type="button"
               onClick$={() => { filterCategory.value = null; }}
               class={[
-                "rounded-full px-3 py-1 text-xs font-medium transition-all duration-150",
+                "rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 border",
                 filterCategory.value === null
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700",
+                  ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                  : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-700",
               ]}
             >
               Todos
             </button>
             {categoryList.value.map((cat) => {
-              const count = serviceList.value.filter((s) => s.category === cat.name).length;
+              const count = serviceList.value.filter((s) => s.categoryId === cat.id).length;
               return (
                 <button
-                  key={cat.name}
+                  key={cat.id}
                   type="button"
-                  onClick$={() => { filterCategory.value = cat.name; }}
+                  onClick$={() => { filterCategory.value = cat.id; }}
                   class={[
-                    "rounded-full px-3 py-1 text-xs font-medium transition-all duration-150",
-                    filterCategory.value === cat.name
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700",
+                    "rounded-full px-3 py-1 text-xs font-medium transition-all duration-150 border",
+                    filterCategory.value === cat.id
+                      ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+                      : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50 hover:text-slate-700",
                   ]}
                 >
                   {cat.name}
                   <span
                     class={[
                       "ml-1 inline-flex items-center justify-center rounded-full px-1.5 text-[10px] font-bold leading-4",
-                      filterCategory.value === cat.name
+                      filterCategory.value === cat.id
                         ? "bg-white/20 text-white"
-                        : "bg-slate-200 text-slate-400",
+                        : "bg-slate-100 text-slate-400",
                     ]}
                   >
                     {count}
@@ -233,9 +218,9 @@ export default component$(() => {
             })}
           </div>
 
-          <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
+          <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
             <table class="w-full text-left text-sm">
-              <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <thead class="bg-stone-50 text-xs uppercase tracking-wide text-slate-500">
                 <tr>
                   <th class="px-6 py-3">Título</th>
                   <th class="px-6 py-3">Categoría</th>
@@ -249,35 +234,18 @@ export default component$(() => {
                       {s.title}
                     </td>
                     <td class="px-6 py-4">
-                      <span class="inline-flex rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-                        {s.category}
+                      <span class="inline-flex rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-700 ring-1 ring-inset ring-slate-200">
+                        {s.categoryName ?? "-"}
                       </span>
                     </td>
                     <td class="px-6 py-4 text-right">
                       <div class="inline-flex items-center gap-1.5">
-                        <a
-                          href={`/servicios/${s.slug}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="inline-flex items-center gap-1 rounded-md bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-200 transition-colors"
-                          title="Ver página pública"
-                        >
-                          <LuExternalLink class="h-3.5 w-3.5" />
-                          Ver
-                        </a>
                         <Link
                           href={`/admin/servicios/${s.id}`}
-                          class="inline-flex items-center gap-1 rounded-md bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100 transition-colors"
+                          class="inline-flex items-center gap-1 rounded-md bg-stone-100 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-stone-200 transition-colors"
                         >
                           <LuPencil class="h-3.5 w-3.5" />
-                          Editar
-                        </Link>
-                        <Link
-                          href={`/admin/servicios/${s.id}`}
-                          class="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-100 transition-colors"
-                        >
-                          <LuImage class="h-3.5 w-3.5" />
-                          Fotos
+                          Editar & Casos
                         </Link>
                       </div>
                     </td>
@@ -303,23 +271,20 @@ export default component$(() => {
             <h2 class="text-lg font-bold text-slate-900">Categorías</h2>
           </div>
 
-          <div class="rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-            {/* Category list */}
+          <div class="rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
             <ul class="divide-y divide-slate-100">
               {categoryList.value.map((cat) => (
                 <li
                   key={cat.id}
-                  class="group px-4 py-3 transition-colors hover:bg-slate-50"
+                  class="group px-4 py-3 transition-colors hover:bg-stone-50"
                 >
                   {editingCategoryId.value === cat.id ? (
-                    // ── Editing mode ──
                     <Form
                       action={updateCategoryAction}
                       class="space-y-2"
                     >
                       <input type="hidden" name="categoryId" value={cat.id} />
                       <div class="flex items-center gap-2">
-                        <LuGripVertical class="h-4 w-4 shrink-0 text-slate-300" />
                         <input
                           type="text"
                           name="name"
@@ -332,14 +297,14 @@ export default component$(() => {
                           onKeyDown$={(e) => {
                             if (e.key === "Escape") cancelEditing();
                           }}
-                          class="flex-1 rounded-md border border-blue-300 px-2.5 py-1 text-sm font-medium shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                          class="flex-1 rounded-lg border border-slate-300 px-2.5 py-1 text-sm font-medium shadow-sm focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 focus:outline-none"
                           placeholder="Nombre de la categoría"
                           autoFocus
                         />
                         <button
                           type="submit"
                           disabled={updateCategoryAction.isRunning}
-                          class="rounded-md bg-blue-600 p-1.5 text-white hover:bg-blue-700 transition-colors disabled:opacity-50"
+                          class="rounded-lg bg-slate-900 p-1.5 text-white hover:bg-slate-800 transition-colors disabled:opacity-50"
                           title="Guardar"
                         >
                           <LuCheck class="h-3.5 w-3.5" />
@@ -347,13 +312,13 @@ export default component$(() => {
                         <button
                           type="button"
                           onClick$={cancelEditing}
-                          class="rounded-md bg-slate-200 p-1.5 text-slate-600 hover:bg-slate-300 transition-colors"
+                          class="rounded-lg bg-slate-200 p-1.5 text-slate-600 hover:bg-slate-300 transition-colors"
                           title="Cancelar"
                         >
                           <LuX class="h-3.5 w-3.5" />
                         </button>
                       </div>
-                      <div class="pl-7">
+                      <div>
                         <textarea
                           name="description"
                           value={editingCategoryDesc.value}
@@ -363,15 +328,13 @@ export default component$(() => {
                             ).value;
                           }}
                           rows={2}
-                          class="w-full rounded-md border border-blue-300 px-2.5 py-1.5 text-xs text-slate-600 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none"
+                          class="w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-xs text-slate-600 shadow-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 focus:outline-none resize-none"
                           placeholder="Descripción breve (opcional)"
                         />
                       </div>
                     </Form>
                   ) : (
-                    // ── Display mode ──
                     <div class="flex items-start gap-3">
-                      <LuGripVertical class="mt-0.5 h-4 w-4 shrink-0 text-slate-300" />
                       <div class="flex-1 min-w-0">
                         <span class="text-sm font-medium text-slate-800">
                           {cat.name}
@@ -382,14 +345,11 @@ export default component$(() => {
                           </p>
                         )}
                       </div>
-                      <span class="mt-0.5 text-xs text-slate-400 tabular-nums shrink-0">
-                        #{cat.sortOrder}
-                      </span>
                       <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                         <button
                           type="button"
                           onClick$={() => startEditing(cat.id, cat.name, cat.description ?? "")}
-                          class="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
                           title="Editar categoría"
                         >
                           <LuPencil class="h-3.5 w-3.5" />
@@ -402,7 +362,7 @@ export default component$(() => {
                           />
                           <button
                             type="submit"
-                            class="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                            class="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
                             title="Eliminar categoría"
                           >
                             <LuTrash2 class="h-3.5 w-3.5" />
@@ -421,7 +381,6 @@ export default component$(() => {
               </div>
             )}
 
-            {/* Error messages */}
             {updateCategoryAction.value?.error && (
               <div class="mx-4 mb-3 rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">
                 {updateCategoryAction.value.error}
@@ -434,7 +393,6 @@ export default component$(() => {
               </div>
             )}
 
-            {/* Add category form */}
             <div class="border-t border-slate-100 p-4">
               <Form
                 action={addCategoryAction}
@@ -445,12 +403,12 @@ export default component$(() => {
                     type="text"
                     name="name"
                     placeholder="Nueva categoría..."
-                    class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none"
+                    class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 focus:outline-none"
                   />
                   <button
                     type="submit"
                     disabled={addCategoryAction.isRunning}
-                    class="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                    class="inline-flex items-center gap-1 rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-slate-800 transition-colors disabled:opacity-50"
                   >
                     <LuPlus class="h-4 w-4" />
                     Agregar
@@ -460,18 +418,13 @@ export default component$(() => {
                   name="description"
                   placeholder="Descripción breve (opcional)"
                   rows={2}
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-600 shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 focus:outline-none resize-none"
+                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-600 shadow-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 focus:outline-none resize-none"
                 />
               </Form>
 
               {addCategoryAction.value?.error && (
                 <p class="mt-2 text-xs text-red-600">
                   {addCategoryAction.value.error}
-                </p>
-              )}
-              {addCategoryAction.value?.success && (
-                <p class="mt-2 text-xs text-emerald-600">
-                  ✓ Categoría agregada correctamente.
                 </p>
               )}
             </div>
