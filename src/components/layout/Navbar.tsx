@@ -29,7 +29,7 @@ export const Navbar = component$(() => {
           <Link href="/#equipo" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Nosotros</Link>
           <Link href="/servicios" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Servicios</Link>
           <a
-            href="https://wa.me/5492235569988"
+            href="https://turnoscolon.com.ar/?sid=12&pid=49&sid=12"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-2.5 text-base font-semibold text-white transition-all hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/25 shadow-sm"
@@ -96,7 +96,7 @@ export const Navbar = component$(() => {
           <div class="my-4 border-t border-slate-100" />
 
           <a
-            href="https://wa.me/5492235569988"
+            href="https://turnoscolon.com.ar/?sid=12&pid=49&sid=12"
             target="_blank"
             rel="noopener noreferrer"
             class="flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-lg font-semibold text-white transition-all hover:bg-blue-700 shadow-sm"

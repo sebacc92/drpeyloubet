@@ -31,10 +31,8 @@ export const Footer = component$(() => {
                 <div class="flex gap-3">
                   <LuMail class="h-5 w-5 text-blue-400 shrink-0 mt-1" />
                   <div class="space-y-1">
-                    <p class="font-medium text-white">Correos Electrónicos:</p>
+                    <p class="font-medium text-white">Correo Electrónico:</p>
                     <a href="mailto:cirugiaplasticaclinicacolon@gmail.com" class="block text-slate-300 hover:text-white transition-colors break-all">cirugiaplasticaclinicacolon@gmail.com</a>
-                    <a href="mailto:sergio.pagani@clinicacolon.com.ar" class="block text-slate-300 hover:text-white transition-colors break-all">sergio.pagani@clinicacolon.com.ar</a>
-                    <a href="mailto:daniel.lafranconi@clinicacolon.com.ar" class="block text-slate-300 hover:text-white transition-colors break-all">daniel.lafranconi@clinicacolon.com.ar</a>
                   </div>
                 </div>
               </div>

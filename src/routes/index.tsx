@@ -107,7 +107,7 @@ export default component$(() => {
             loading="eager"
             decoding="sync"
           />
-          <div class="absolute inset-0 bg-gradient-to-b from-[#00173A]/60 via-[#00173A]/20 to-transparent"></div>
+          <div class="absolute inset-0 bg-gradient-to-b from-[#00173A]/80 via-[#00173A]/50 to-[#00173A]/30"></div>
         </div>
 
         <div class="relative z-10 px-6 py-32 mx-auto max-w-7xl text-center flex flex-col items-center">
@@ -126,12 +126,14 @@ export default component$(() => {
 
           <div class="flex flex-col sm:flex-row items-center gap-6">
             <a
-              href="#agendar"
-              aria-label="Ir al formulario para agendar cita médica"
-              class="group relative overflow-hidden bg-[#F9F4E9] text-[#00173A] px-8 py-4 rounded-xl font-semibold tracking-wide transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center gap-2"
+              href="https://turnoscolon.com.ar/?sid=12&pid=49&sid=12"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Solicitar turno online"
+              class="group relative overflow-hidden bg-[#F9F4E9] text-[#00173A] px-8 py-4 rounded-xl font-semibold tracking-wide transition-all duration-300 hover:shadow-[0_8px_30px_rgba(249,244,233,0.3)] hover:scale-105 flex items-center gap-3"
             >
               <LuCalendarDays class="w-5 h-5" />
-              <span class="relative z-10">Agendar Consulta Online</span>
+              <span class="relative z-10">Solicitar Turno Online</span>
             </a>
             <a
               href="#equipo"
@@ -145,28 +147,33 @@ export default component$(() => {
       </section>
 
       {/* ─── Trust Band ─── */}
-      <section class="bg-[#F9F4E9] py-8 border-b border-stone-200">
+      <section class="bg-white py-12 border-b border-stone-100">
         <div class="max-w-7xl mx-auto px-6">
-          <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* Logos SVG Placeholders */}
-            <div class="flex items-center justify-center">
-              <svg class="w-48 h-12 text-[#00173A]" viewBox="0 0 160 48" fill="currentColor" aria-label="Clínica Colón">
-                <rect width="160" height="48" rx="8" fill-opacity="0.1" />
-                <text x="50%" y="50%" fill="currentColor" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle" dy=".3em">Clínica Colón</text>
-              </svg>
-            </div>
-            <div class="flex items-center justify-center">
-              <svg class="w-48 h-12 text-[#00173A]" viewBox="0 0 160 48" fill="currentColor" aria-label="SACPER">
-                <rect width="160" height="48" rx="8" fill-opacity="0.1" />
-                <text x="50%" y="50%" fill="currentColor" font-size="14" font-family="sans-serif" font-weight="bold" text-anchor="middle" dy=".3em">SACPER</text>
-              </svg>
-            </div>
-            <div class="flex items-center justify-center">
-              <svg class="w-48 h-12 text-[#00173A]" viewBox="0 0 160 48" fill="currentColor" aria-label="Sociedad Marplatense de Cirugía Plástica">
-                <rect width="160" height="48" rx="8" fill-opacity="0.1" />
-                <text x="50%" y="50%" fill="currentColor" font-size="11" font-family="sans-serif" font-weight="bold" text-anchor="middle" dy=".3em">Soc. Marplatense Cirugía</text>
-              </svg>
-            </div>
+          <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-20">
+            <a 
+              href="https://clinicacolon.com.ar/especialidades/cirugia-plastica/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex items-center justify-center transition-transform hover:scale-105"
+            >
+              <img src="/clinicacolon.png" alt="Clínica Colón" class="h-12 md:h-16 w-auto object-contain" />
+            </a>
+            <a 
+              href="https://www.sacper.org.ar/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex items-center justify-center transition-transform hover:scale-105"
+            >
+              <img src="/sacper.webp" alt="SACPER" class="h-12 md:h-16 w-auto object-contain" />
+            </a>
+            <a 
+              href="https://www.instagram.com/soc_cirugiaplastica_mdp/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="flex items-center justify-center transition-transform hover:scale-105"
+            >
+              <img src="/sociedad-marplatense-de-cirujia-plastica.webp" alt="Sociedad Marplatense de Cirugía Plástica" class="h-12 md:h-16 w-auto object-contain" />
+            </a>
           </div>
         </div>
       </section>
@@ -189,7 +196,7 @@ export default component$(() => {
               <div class="w-full lg:w-1/3 flex flex-col items-center lg:items-start">
                 <div class="relative w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full shadow-lg border-4 border-white bg-[#F2F4F7] mb-6">
                   <img
-                    src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80"
+                    src="/Lafranconi-Daniel-Cirugía-Plástica.jpg"
                     alt="Dr. Daniel Lafranconi"
                     width={400}
                     height={400}
@@ -205,33 +212,41 @@ export default component$(() => {
               </div>
 
               {/* Data Right */}
-              <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-[#F2F4F7] p-8 rounded-2xl flex flex-col items-start text-left shadow-sm">
-                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-6 shadow-sm"><LuGraduationCap class="w-6 h-6" /></div>
-                  <h4 class="text-xl font-semibold text-[#00173A] mb-4">Formación</h4>
-                  <ul class="text-[#00173A]/80 space-y-3 text-sm leading-relaxed">
-                    <li>• Médico. UNLP, 1982.</li>
-                    <li>• Especialista en Cirugía General. Colegio de Médicos, 1987.</li>
-                    <li>• Especialista en Cirugía Plástica y Reparadora, 1992.</li>
+              <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuGraduationCap class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Títulos</h4>
+                  <ul class="text-[#00173A]/80 space-y-2 text-sm leading-relaxed">
+                    <li>• Médico. Universidad Nacional de La Plata. Facultad de Ciencias Médicas, 1982.</li>
+                    <li>• Especialista en Cirugía General. Colegio de Médicos de la Provincia de Buenos Aires - IX Distrito, 1987.</li>
+                    <li>• Especialista en Cirugía Plástica y Reparadora. Colegio de Médicos de la Provincia de Buenos Aires - IX Distrito, 1992.</li>
                   </ul>
                 </div>
 
-                <div class="bg-[#F2F4F7] p-8 rounded-2xl flex flex-col items-start text-left shadow-sm">
-                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-6 shadow-sm"><LuBriefcase class="w-6 h-6" /></div>
-                  <h4 class="text-xl font-semibold text-[#00173A] mb-4">Cargo Asistencial</h4>
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuAward class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Membresías</h4>
+                  <ul class="text-[#00173A]/80 space-y-2 text-sm leading-relaxed">
+                    <li>• Sociedad de Cirugía Plástica de Mar del Plata</li>
+                    <li>• Asociación Médica Argentina</li>
+                    <li>• Sociedad Argentina de Cirugía Plástica, Estética y Reparadora</li>
+                  </ul>
+                </div>
+
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuBriefcase class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Cargo Asistencial</h4>
                   <p class="text-[#00173A]/80 text-sm leading-relaxed">
-                    Coordinador del Servicio de Cirugía Plástica en la institución médica.
+                    Coordinador del Servicio de Cirugía Plástica en Clínica Colón.
                   </p>
                 </div>
 
-                <div class="bg-[#F2F4F7] p-8 rounded-2xl flex flex-col items-start text-left shadow-sm">
-                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-6 shadow-sm"><LuAward class="w-6 h-6" /></div>
-                  <h4 class="text-xl font-semibold text-[#00173A] mb-4">Sociedades</h4>
-                  <ul class="text-[#00173A]/80 space-y-3 text-sm leading-relaxed">
-                    <li>• SACPER</li>
-                    <li>• Sociedad de Cirugía Plástica de Mar del Plata</li>
-                    <li>• Asociación Médica Argentina</li>
-                  </ul>
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuStar class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Contacto</h4>
+                  <a href="mailto:daniel.lafranconi@clinicacolon.com.ar" class="text-[#00173A]/80 text-sm hover:text-[#00173A] transition-colors underline-offset-2 hover:underline">
+                    daniel.lafranconi@clinicacolon.com.ar
+                  </a>
                 </div>
               </div>
             </div>
@@ -242,7 +257,7 @@ export default component$(() => {
               <div class="w-full lg:w-1/3 flex flex-col items-center lg:items-start">
                 <div class="relative w-64 h-64 md:w-80 md:h-80 overflow-hidden rounded-full shadow-lg border-4 border-white bg-[#F2F4F7] mb-6">
                   <img
-                    src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=800&q=80"
+                    src="/Pagani-Sergio-Cirugía-Plástica.jpg"
                     alt="Dr. Sergio Pagani"
                     width={400}
                     height={400}
@@ -258,33 +273,43 @@ export default component$(() => {
               </div>
 
               {/* Data Right */}
-              <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-[#F2F4F7] p-8 rounded-2xl flex flex-col items-start text-left shadow-sm">
-                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-6 shadow-sm"><LuGraduationCap class="w-6 h-6" /></div>
-                  <h4 class="text-xl font-semibold text-[#00173A] mb-4">Formación</h4>
-                  <ul class="text-[#00173A]/80 space-y-3 text-sm leading-relaxed">
-                    <li>• Médico. UNLP, 1984.</li>
-                    <li>• Especialista en Cirugía General. Colegio de Médicos, 1990.</li>
-                    <li>• Especialista en Cirugía Plástica y Reparadora, 1996.</li>
+              <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuGraduationCap class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Títulos</h4>
+                  <ul class="text-[#00173A]/80 space-y-2 text-sm leading-relaxed">
+                    <li>• Médico. Universidad Nacional de La Plata. Facultad de Ciencias Médicas, 1984.</li>
+                    <li>• Especialista en Cirugía General. Colegio de Médicos de la Provincia de Buenos Aires - IX Distrito, 1990.</li>
+                    <li>• Especialista en Cirugía Plástica y Reparadora. Colegio de Médicos de la Provincia de Buenos Aires - IX Distrito, 1996.</li>
                   </ul>
                 </div>
 
-                <div class="bg-[#F2F4F7] p-8 rounded-2xl flex flex-col items-start text-left shadow-sm">
-                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-6 shadow-sm"><LuBriefcase class="w-6 h-6" /></div>
-                  <h4 class="text-xl font-semibold text-[#00173A] mb-4">Cargo Asistencial</h4>
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuAward class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Membresías</h4>
+                  <ul class="text-[#00173A]/80 space-y-2 text-sm leading-relaxed">
+                    <li>• Confederation for Plastic Reconstructive and Aesthetic Surgery (IPRAS)</li>
+                    <li>• Asociación Argentina de Cirugía</li>
+                    <li>• Sociedad Argentina de Cirugía Plástica</li>
+                    <li>• Sociedad Marplatense de Cirugía Plástica</li>
+                    <li>• Sociedad de Cirujanos de Mar del Plata</li>
+                  </ul>
+                </div>
+
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuBriefcase class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Cargo Asistencial</h4>
                   <p class="text-[#00173A]/80 text-sm leading-relaxed">
-                    Integrante del Servicio de Cirugía Plástica en la institución médica.
+                    Integrante del Servicio de Cirugía Plástica.
                   </p>
                 </div>
 
-                <div class="bg-[#F2F4F7] p-8 rounded-2xl flex flex-col items-start text-left shadow-sm">
-                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-6 shadow-sm"><LuAward class="w-6 h-6" /></div>
-                  <h4 class="text-xl font-semibold text-[#00173A] mb-4">Sociedades</h4>
-                  <ul class="text-[#00173A]/80 space-y-3 text-sm leading-relaxed">
-                    <li>• IPRAS</li>
-                    <li>• SACPER</li>
-                    <li>• Asociación Argentina de Cirugía</li>
-                  </ul>
+                <div class="bg-[#F2F4F7] p-6 rounded-2xl flex flex-col items-start text-left shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <div class="bg-white p-3 rounded-xl text-[#00173A] mb-5 shadow-sm"><LuStar class="w-6 h-6" /></div>
+                  <h4 class="text-lg font-semibold text-[#00173A] mb-3">Contacto</h4>
+                  <a href="mailto:sergio.pagani@clinicacolon.com.ar" class="text-[#00173A]/80 text-sm hover:text-[#00173A] transition-colors underline-offset-2 hover:underline">
+                    sergio.pagani@clinicacolon.com.ar
+                  </a>
                 </div>
               </div>
             </div>
@@ -345,7 +370,7 @@ export default component$(() => {
                 Turnos vía WhatsApp
               </a>
               <a
-                href="https://turnoscolon.com.ar/?sid=12"
+                href="https://turnoscolon.com.ar/?sid=12&pid=49&sid=12"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="inline-flex items-center px-6 py-3 rounded-xl bg-slate-900 text-white font-semibold tracking-wide transition-all hover:bg-slate-800 hover:shadow-lg w-full sm:w-auto justify-center"
@@ -524,13 +549,6 @@ export default component$(() => {
           </div>
         </section>
       )}
-
-      {/* ─── Booking Form Section ─── */}
-      <section class="py-24 bg-white border-t border-stone-200" id="agendar">
-        <div class="max-w-7xl mx-auto px-6">
-          <BookingForm action={bookingAction} services={data.value.flatServices} />
-        </div>
-      </section>
 
     </div>
   );
