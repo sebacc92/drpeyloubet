@@ -106,7 +106,7 @@ export default component$(() => {
       <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#00173A]">
         <div class="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&q=80&w=2000"
+            src="/ejemplo.webp"
             alt="Quirófano moderno y limpio"
             width={2000}
             height={1200}
@@ -494,6 +494,7 @@ export default component$(() => {
       <section class="py-24 bg-white" id="servicios">
         <div class="max-w-7xl mx-auto px-6">
           <div class="text-center mb-16">
+            <span class="text-xs font-bold tracking-widest text-blue-950/60 uppercase mb-3 block">Servicios</span>
             <h2 class="text-3xl md:text-5xl font-serif text-slate-900 mb-4 tracking-tight">Tratamientos</h2>
             <p class="text-slate-500 max-w-2xl mx-auto text-lg">
               Ofrecemos opciones tanto quirúrgicas como no invasivas, diseñadas para brindar resultados naturales y duraderos.
