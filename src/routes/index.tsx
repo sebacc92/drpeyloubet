@@ -1,9 +1,9 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { routeLoader$, routeAction$, Link } from "@builder.io/qwik-city";
-import { LuArrowRight, LuStar, LuCheck, LuArrowRightCircle, LuArrowLeftCircle, LuSparkles, LuActivity, LuChevronDown, LuCalendarDays, LuVideo } from "@qwikest/icons/lucide";
-import { getDb, services, categories, siteSettings, beforeAfterCases, appointments } from "~/db";
-import { eq } from "drizzle-orm";
+import { LuArrowRight, LuStar, LuArrowRightCircle, LuArrowLeftCircle, LuSparkles, LuActivity, LuChevronDown, LuCalendarDays, LuVideo, LuSyringe } from "@qwikest/icons/lucide";
+import { getDb, services, categories, siteSettings, beforeAfterCases, appointments, treatments } from "~/db";
+import { eq, asc } from "drizzle-orm";
 import { Chatbot } from "~/components/chatbot/chatbot";
 
 // ─── Actions ──────────────────────────────────────────────
@@ -68,6 +68,20 @@ export const useHomeData = routeLoader$(async (event) => {
   const s: Record<string, string> = {};
   for (const r of rows) s[r.key] = r.value;
 
+  const allTreatments = await db
+    .select({
+      id: treatments.id,
+      slug: treatments.slug,
+      name: treatments.name,
+      category: treatments.category,
+      shortDescription: treatments.shortDescription,
+      mainImageUrl: treatments.mainImageUrl,
+      isFeatured: treatments.isFeatured,
+      displayOrder: treatments.displayOrder,
+    })
+    .from(treatments)
+    .orderBy(asc(treatments.displayOrder));
+
   return {
     categories: cats.map((cat) => ({
       ...cat,
@@ -75,6 +89,7 @@ export const useHomeData = routeLoader$(async (event) => {
     })),
     flatServices: allServices.map(s => ({ id: s.id, title: s.title })),
     featuredCases,
+    treatments: allTreatments,
     hero: {
       title: s.hero_title || "Cirugía Plástica, Estética y Reparadora en Mar del Plata",
       description: s.hero_description || "Realza tu bienestar y confianza con la máxima seguridad y experiencia médica.",
@@ -121,9 +136,9 @@ export default component$(() => {
         </div>
 
         <div class="relative z-10 px-6 py-32 mx-auto max-w-7xl text-center flex flex-col items-center">
-          <div class="inline-flex items-center gap-2 px-4 py-2 border border-[#F9F4E9]/30 rounded-full mb-8 bg-[#00173A]/40 backdrop-blur-sm">
-            <LuStar class="w-4 h-4 text-[#F9F4E9]" />
-            <span class="text-md uppercase tracking-widest text-[#F9F4E9] font-semibold">35+ Años de Experiencia</span>
+          <div class="inline-flex items-center gap-3 px-6 py-3 bg-[#F9F4E9] rounded-full mb-10 shadow-lg shadow-[#F9F4E9]/20">
+            <LuStar class="w-5 h-5 text-[#00173A]" />
+            <span class="text-base md:text-lg uppercase tracking-widest text-[#00173A] font-bold">35+ Años de Experiencia</span>
           </div>
 
           <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif text-white max-w-4xl mx-auto leading-tight md:leading-tight mb-8 drop-shadow-md">
@@ -429,17 +444,22 @@ export default component$(() => {
       </section>
 
       {/* ─── Quote Section ─── */}
-      <section class="bg-white py-24 px-6 overflow-hidden border-y border-stone-100">
-        <div class="max-w-5xl mx-auto text-center relative">
-          <span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl text-stone-100 font-serif opacity-60 select-none">“</span>
-          <div class="mb-8 flex justify-center items-center gap-4">
-            <div class="h-px w-12 bg-stone-200"></div>
-            <span class="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Excelencia Médica</span>
-            <div class="h-px w-12 bg-stone-200"></div>
+      <section class="bg-[#00173A] py-28 px-6 overflow-hidden relative">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+          <div class="mb-10 flex justify-center items-center gap-4">
+            <div class="h-px w-16 bg-white/20"></div>
+            <LuStar class="w-5 h-5 text-[#F9F4E9]/60" />
+            <div class="h-px w-16 bg-white/20"></div>
           </div>
-          <p class="text-3xl md:text-4xl lg:text-5xl font-serif italic text-slate-800 leading-tight relative z-10">
+          <blockquote class="text-2xl md:text-3xl lg:text-4xl font-serif italic text-white/90 leading-relaxed">
             "La trayectoria y la experiencia del cirujano plástico es fundamental al momento de realizarte un tratamiento estético o reparador"
-          </p>
+          </blockquote>
+          <div class="mt-10 flex justify-center items-center gap-4">
+            <div class="h-px w-8 bg-[#F9F4E9]/30"></div>
+            <span class="text-sm uppercase tracking-[0.2em] text-[#F9F4E9]/50 font-semibold">Dr. Lafranconi & Dr. Pagani</span>
+            <div class="h-px w-8 bg-[#F9F4E9]/30"></div>
+          </div>
         </div>
       </section>
 
@@ -490,7 +510,7 @@ export default component$(() => {
         </div>
       </section>
 
-      {/* ─── Services Grid ─── */}
+      {/* ─── Treatments Grid ─── */}
       <section class="py-24 bg-white" id="servicios">
         <div class="max-w-7xl mx-auto px-6">
           <div class="text-center mb-16">
@@ -502,38 +522,94 @@ export default component$(() => {
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data.value.categories.map((cat) => (
-              <div key={cat.id} class="bg-stone-50 p-8 rounded-2xl border border-stone-100 flex flex-col group transition-all duration-300 hover:shadow-lg hover:border-slate-200">
-                <h3 class="text-2xl font-serif text-slate-900 mb-3 group-hover:text-amber-700 transition-colors">{cat.name}</h3>
-                {cat.description && (
-                  <p class="text-slate-600 mb-6 text-sm flex-grow line-clamp-3">
-                    {cat.description}
-                  </p>
-                )}
+            {data.value.treatments
+              .filter((t) => t.isFeatured)
+              .map((treatment) => {
+                const catColors: Record<string, { bg: string; text: string }> = {
+                  estetica: { bg: "bg-rose-50 border-rose-200", text: "text-rose-700" },
+                  reparadora: { bg: "bg-blue-50 border-blue-200", text: "text-blue-700" },
+                  no_quirurgica: { bg: "bg-amber-50 border-amber-200", text: "text-amber-700" },
+                };
+                const catLabels: Record<string, string> = {
+                  estetica: "Estética",
+                  reparadora: "Reparadora",
+                  no_quirurgica: "No Quirúrgico",
+                };
+                const catColor = catColors[treatment.category] || catColors.estetica;
 
-                {cat.services.length > 0 && (
-                  <ul class="space-y-3 mb-8">
-                    {cat.services.map((srv) => (
-                      <li key={srv.id}>
-                        <Link href={`/servicios#cat-${cat.id}`} class="flex items-center text-slate-700 hover:text-slate-900 group/link transition-colors">
-                          <LuCheck class="w-4 h-4 text-rose-300 mr-2 shrink-0 transition-transform group-hover/link:scale-125" />
-                          <span class="text-sm font-medium">{srv.title}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-
-                <div class="mt-auto">
+                return (
                   <Link
-                    href="/servicios"
-                    class="inline-flex items-center text-sm font-bold text-slate-900 group-hover:text-amber-700 tracking-wide transition-colors"
+                    key={treatment.slug}
+                    href={`/tratamientos/${treatment.slug}`}
+                    class="group flex flex-col overflow-hidden rounded-2xl bg-white border border-stone-100 transition-all duration-500 hover:scale-[1.02] hover:shadow-2xl hover:border-slate-200 relative"
                   >
-                    Consultar Catálogo <LuArrowRight class="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    {/* Category badge */}
+                    <div
+                      class={[
+                        "absolute top-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border backdrop-blur-sm",
+                        catColor.bg,
+                        catColor.text,
+                      ]}
+                    >
+                      {treatment.category === "estetica" && <LuSparkles class="w-3 h-3" />}
+                      {treatment.category === "reparadora" && <LuActivity class="w-3 h-3" />}
+                      {treatment.category === "no_quirurgica" && <LuSyringe class="w-3 h-3" />}
+                      {catLabels[treatment.category] || treatment.category}
+                    </div>
+
+                    {/* Image or placeholder */}
+                    {treatment.mainImageUrl ? (
+                      <div class="aspect-[4/3] overflow-hidden bg-slate-100">
+                        <img
+                          src={treatment.mainImageUrl}
+                          alt={treatment.name}
+                          loading="lazy"
+                          decoding="async"
+                          width={500}
+                          height={400}
+                          class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+                    ) : (
+                      <div class="aspect-[4/3] bg-gradient-to-br from-slate-800 via-slate-900 to-blue-950 flex items-center justify-center">
+                        <div class="text-white/15 scale-[3]">
+                          {treatment.category === "estetica" && <LuSparkles class="w-6 h-6" />}
+                          {treatment.category === "reparadora" && <LuActivity class="w-6 h-6" />}
+                          {treatment.category === "no_quirurgica" && <LuSyringe class="w-6 h-6" />}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Content */}
+                    <div class="flex flex-1 flex-col p-8">
+                      <h3 class="text-xl font-serif text-slate-900 mb-3 group-hover:text-amber-700 transition-colors duration-300">
+                        {treatment.name}
+                      </h3>
+                      {treatment.shortDescription && (
+                        <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-2">
+                          {treatment.shortDescription}
+                        </p>
+                      )}
+                      <div class="flex-1" />
+                      <div class="mt-4 flex items-center font-bold tracking-wide text-slate-900 text-sm group-hover:text-amber-700 transition-colors duration-300">
+                        <span>Ver Detalles</span>
+                        <LuArrowRight class="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-2" />
+                      </div>
+                    </div>
                   </Link>
-                </div>
-              </div>
-            ))}
+                );
+              })}
+          </div>
+
+          {/* View all link */}
+          <div class="mt-16 text-center">
+            <Link
+              href="/tratamientos"
+              class="inline-flex items-center gap-2 px-8 py-4 rounded-xl border-2 border-slate-900 text-slate-900 font-semibold tracking-wide transition-all duration-300 hover:bg-slate-900 hover:text-white"
+            >
+              Ver Todos los Tratamientos
+              <LuArrowRight class="w-5 h-5" />
+            </Link>
           </div>
         </div>
       </section>

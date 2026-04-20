@@ -24,6 +24,13 @@ export default component$(() => {
               Contenido Home
             </Link>
 
+            <Link
+              href="/admin/tratamientos/"
+              class="text-sm text-slate-300 hover:text-white transition-colors"
+            >
+              Tratamientos
+            </Link>
+
             <div class="flex items-center gap-4">
               <a
                 href="/"

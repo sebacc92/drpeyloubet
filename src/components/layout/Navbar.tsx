@@ -27,7 +27,7 @@ export const Navbar = component$(() => {
         <nav class="hidden md:flex items-center gap-8 text-base font-medium text-slate-700">
           <Link href="/" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Inicio</Link>
           <Link href="/#equipo" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Nosotros</Link>
-          <Link href="/servicios" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Servicios</Link>
+          <Link href="/tratamientos" class="relative py-1 hover:text-blue-600 transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all hover:after:w-full">Tratamientos</Link>
           <a
             href="https://turnoscolon.com.ar/?sid=12&pid=49&sid=12"
             target="_blank"
@@ -86,11 +86,11 @@ export const Navbar = component$(() => {
             Nosotros
           </Link>
           <Link
-            href="/servicios"
+            href="/tratamientos"
             onClick$={closeMenu}
             class="rounded-xl px-4 py-3 text-lg font-medium text-slate-800 hover:bg-blue-50 hover:text-blue-600 transition-colors"
           >
-            Servicios
+            Tratamientos
           </Link>
 
           <div class="my-4 border-t border-slate-100" />

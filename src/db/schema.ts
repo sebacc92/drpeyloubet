@@ -93,3 +93,40 @@ export const chatLogs = sqliteTable("chat_logs", {
   botResponse: text("bot_response").notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
 });
+
+// ─── Treatments ──────────────────────────────────────────
+export const treatments = sqliteTable("treatments", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  slug: text("slug").notNull().unique(),
+  name: text("name").notNull(),
+  category: text("category", { enum: ["estetica", "reparadora", "no_quirurgica"] }).notNull(),
+  shortDescription: text("short_description"),
+  fullDescription: text("full_description"),
+  mainImageUrl: text("main_image_url"),
+  isFeatured: integer("is_featured", { mode: "boolean" }).default(false),
+  displayOrder: integer("display_order").default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+});
+
+export const treatmentsRelations = relations(treatments, ({ many }) => ({
+  beforeAfterImages: many(treatmentBeforeAfter),
+}));
+
+// ─── Treatment Before & After Images ─────────────────────
+export const treatmentBeforeAfter = sqliteTable("treatment_before_after", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  treatmentId: integer("treatment_id").notNull().references(() => treatments.id, { onDelete: "cascade" }),
+  beforeImageUrl: text("before_image_url").notNull(),
+  afterImageUrl: text("after_image_url").notNull(),
+  caption: text("caption"),
+  displayOrder: integer("display_order").default(0),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+});
+
+export const treatmentBeforeAfterRelations = relations(treatmentBeforeAfter, ({ one }) => ({
+  treatment: one(treatments, {
+    fields: [treatmentBeforeAfter.treatmentId],
+    references: [treatments.id],
+  }),
+}));
