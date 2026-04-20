@@ -1,10 +1,9 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { routeLoader$, routeAction$, Link } from "@builder.io/qwik-city";
-import { LuArrowRight, LuStar, LuCheck, LuArrowRightCircle, LuArrowLeftCircle, LuGraduationCap, LuAward, LuBriefcase, LuClock, LuSparkles, LuActivity, LuChevronDown, LuCalendarDays } from "@qwikest/icons/lucide";
+import { LuArrowRight, LuStar, LuCheck, LuArrowRightCircle, LuArrowLeftCircle, LuSparkles, LuActivity, LuChevronDown, LuCalendarDays, LuVideo } from "@qwikest/icons/lucide";
 import { getDb, services, categories, siteSettings, beforeAfterCases, appointments } from "~/db";
 import { eq } from "drizzle-orm";
-import { BookingForm } from "~/components/booking-form/booking-form";
 import { Chatbot } from "~/components/chatbot/chatbot";
 
 // ─── Actions ──────────────────────────────────────────────
@@ -88,8 +87,16 @@ export const useHomeData = routeLoader$(async (event) => {
 // ─── Componentes ──────────────────────────────────────────
 export default component$(() => {
   const data = useHomeData();
-  const bookingAction = useBookingAction();
   const hero = data.value.hero;
+  const scrollY = useSignal(0);
+
+  useVisibleTask$(() => {
+    const handleScroll = () => {
+      scrollY.value = window.scrollY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  });
 
   return (
     <div class="bg-stone-50 min-h-screen">
@@ -103,9 +110,12 @@ export default component$(() => {
             alt="Quirófano moderno y limpio"
             width={2000}
             height={1200}
-            class="h-full w-full object-cover"
+            class="h-full w-full object-cover scale-110"
             loading="eager"
             decoding="sync"
+            style={{
+              transform: `translateY(${scrollY.value * 0.3}px)`,
+            }}
           />
           <div class="absolute inset-0 bg-gradient-to-b from-[#00173A]/80 via-[#00173A]/50 to-[#00173A]/30"></div>
         </div>
@@ -113,7 +123,7 @@ export default component$(() => {
         <div class="relative z-10 px-6 py-32 mx-auto max-w-7xl text-center flex flex-col items-center">
           <div class="inline-flex items-center gap-2 px-4 py-2 border border-[#F9F4E9]/30 rounded-full mb-8 bg-[#00173A]/40 backdrop-blur-sm">
             <LuStar class="w-4 h-4 text-[#F9F4E9]" />
-            <span class="text-xs uppercase tracking-widest text-[#F9F4E9] font-semibold">Medicina Avanzada</span>
+            <span class="text-md uppercase tracking-widest text-[#F9F4E9] font-semibold">35+ Años de Experiencia</span>
           </div>
 
           <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif text-white max-w-4xl mx-auto leading-tight md:leading-tight mb-8 drop-shadow-md">
@@ -146,37 +156,6 @@ export default component$(() => {
         </div>
       </section>
 
-      {/* ─── Trust Band ─── */}
-      <section class="bg-white py-12 border-b border-stone-100">
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-20">
-            <a
-              href="https://clinicacolon.com.ar/especialidades/cirugia-plastica/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105"
-            >
-              <img src="/clinicacolon.png" alt="Clínica Colón" class="h-12 md:h-16 w-auto object-contain" />
-            </a>
-            <a
-              href="https://www.sacper.org.ar/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105"
-            >
-              <img src="/sacper.webp" alt="SACPER" class="h-12 md:h-16 w-auto object-contain" />
-            </a>
-            <a
-              href="https://www.instagram.com/soc_cirugiaplastica_mdp/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105"
-            >
-              <img src="/sociedad-marplatense-de-cirujia-plastica.webp" alt="Sociedad Marplatense de Cirugía Plástica" class="h-12 md:h-16 w-auto object-contain" />
-            </a>
-          </div>
-        </div>
-      </section>
 
       {/* ─── Doctors Section ─── */}
       <section class="py-24 md:py-32 bg-[#F9F6F0]" id="equipo">
@@ -379,7 +358,6 @@ export default component$(() => {
           <div class="mt-24 bg-white rounded-[2.5rem] border border-stone-200 shadow-xl shadow-blue-950/5 overflow-hidden max-w-5xl mx-auto">
             <div class="bg-slate-900 p-6 text-center">
               <h3 class="text-2xl font-serif text-white">Información y Turnos</h3>
-              <p class="text-slate-400 mt-2 text-sm">*Consultas solo con turnos programados.</p>
             </div>
 
             <div class="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-12">
@@ -413,14 +391,14 @@ export default component$(() => {
                   </div>
                   <div class="bg-amber-50 p-4 rounded-lg border border-amber-100 mt-4">
                     <p class="text-xs text-amber-800 leading-relaxed">
-                      <strong>*Importante:</strong> recuerde que, para todo tipo de atención en la Clínica, deberá presentar credencial y DNI de la persona que recibirá la atención.
+                      Consultas solo con turnos programados.
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="bg-slate-50 border-t border-slate-100 p-6 flex flex-col sm:flex-row justify-center items-center gap-4">
+            <div class="bg-slate-50 border-t border-slate-100 p-6 flex flex-col sm:flex-row justify-center items-center gap-4 flex-wrap">
               <a
                 href="https://wa.me/5492235569988"
                 target="_blank"
@@ -437,10 +415,34 @@ export default component$(() => {
               >
                 Turnos Clínica Colón <LuArrowRight class="ml-2 w-4 h-4" />
               </a>
+              <a
+                href="https://cal.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold tracking-wide transition-all hover:bg-blue-700 hover:shadow-lg w-full sm:w-auto justify-center"
+              >
+                <LuVideo class="mr-2 w-4 h-4" /> Consulta Online (Videollamada)
+              </a>
             </div>
           </div>
         </div>
       </section>
+
+      {/* ─── Quote Section ─── */}
+      <section class="bg-white py-24 px-6 overflow-hidden border-y border-stone-100">
+        <div class="max-w-5xl mx-auto text-center relative">
+          <span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 text-8xl text-stone-100 font-serif opacity-60 select-none">“</span>
+          <div class="mb-8 flex justify-center items-center gap-4">
+            <div class="h-px w-12 bg-stone-200"></div>
+            <span class="text-xs uppercase tracking-[0.3em] text-stone-400 font-semibold">Excelencia Médica</span>
+            <div class="h-px w-12 bg-stone-200"></div>
+          </div>
+          <p class="text-3xl md:text-4xl lg:text-5xl font-serif italic text-slate-800 leading-tight relative z-10">
+            "La trayectoria y la experiencia del cirujano plástico es fundamental al momento de realizarte un tratamiento estético o reparador"
+          </p>
+        </div>
+      </section>
+
 
       {/* ─── Description Section ─── */}
       <section class="py-24 bg-white relative overflow-hidden" id="especialidad">
@@ -609,6 +611,47 @@ export default component$(() => {
           </div>
         </section>
       )}
+
+
+      {/* ─── Trust Band ─── */}
+      <section class="bg-white py-16 border-t border-stone-100">
+        <div class="max-w-7xl mx-auto px-6">
+          <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20">
+            <a
+              href="https://clinicacolon.com.ar/especialidades/cirugia-plastica/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+            >
+              <img src="/clinicacolon.png" alt="Clínica Colón" class="h-12 md:h-14 w-auto object-contain" />
+            </a>
+            <a
+              href="https://www.sacper.org.ar/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+            >
+              <img src="/sacper.webp" alt="SACPER" class="h-12 md:h-14 w-auto object-contain" />
+            </a>
+            <a
+              href="https://www.instagram.com/soc_cirugiaplastica_mdp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+            >
+              <img src="/sociedad-marplatense-de-cirujia-plastica.webp" alt="Sociedad Marplatense de Cirugía Plástica" class="h-12 md:h-14 w-auto object-contain" />
+            </a>
+            <a
+              href="https://www.ipras.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+            >
+              <img src="/IPRAS.webp" alt="IPRAS" class="h-12 md:h-14 w-auto object-contain" />
+            </a>
+          </div>
+        </div>
+      </section>
 
     </div>
   );
