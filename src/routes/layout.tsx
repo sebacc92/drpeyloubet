@@ -3,6 +3,7 @@ import type { RequestHandler } from "@builder.io/qwik-city";
 import { Navbar } from "~/components/layout/Navbar";
 import { Footer } from "~/components/layout/Footer";
 import { WhatsAppButton } from "~/components/layout/WhatsAppButton";
+import { Chatbot } from "~/components/chatbot/chatbot";
 
 export const onGet: RequestHandler = async ({ cacheControl }) => {
   cacheControl({
@@ -20,6 +21,7 @@ export default component$(() => {
       </main>
       <Footer />
       <WhatsAppButton />
+      <Chatbot />
     </div>
   );
 });

@@ -4,7 +4,6 @@ import { routeLoader$, routeAction$, Link } from "@builder.io/qwik-city";
 import { LuArrowRight, LuStar, LuArrowRightCircle, LuArrowLeftCircle, LuSparkles, LuActivity, LuChevronDown, LuCalendarDays, LuVideo, LuSyringe } from "@qwikest/icons/lucide";
 import { getDb, services, categories, siteSettings, beforeAfterCases, appointments, treatments } from "~/db";
 import { eq, asc } from "drizzle-orm";
-import { Chatbot } from "~/components/chatbot/chatbot";
 
 // ─── Actions ──────────────────────────────────────────────
 export const useBookingAction = routeAction$(async (data, event) => {
@@ -115,7 +114,6 @@ export default component$(() => {
 
   return (
     <div class="bg-stone-50 min-h-screen">
-      <Chatbot />
 
       {/* ─── Hero Section ─── */}
       <section class="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-[#00173A]">
@@ -366,6 +364,45 @@ export default component$(() => {
                   </div>
                 </details>
               </div>
+            </div>
+          </div>
+
+
+          {/* ─── Trust Band ─── */}
+          <div class="mt-20 border-t border-blue-950/5 pt-16">
+            <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20">
+              <a
+                href="https://clinicacolon.com.ar/especialidades/cirugia-plastica/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+              >
+                <img src="/clinicacolon.png" alt="Clínica Colón" class="h-12 md:h-14 w-auto object-contain" />
+              </a>
+              <a
+                href="https://www.sacper.org.ar/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+              >
+                <img src="/sacper.webp" alt="SACPER" class="h-12 md:h-14 w-auto object-contain" />
+              </a>
+              <a
+                href="https://www.instagram.com/soc_cirugiaplastica_mdp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+              >
+                <img src="/sociedad-marplatense-de-cirujia-plastica.webp" alt="Sociedad Marplatense de Cirugía Plástica" class="h-12 md:h-14 w-auto object-contain" />
+              </a>
+              <a
+                href="https://www.ipras.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
+              >
+                <img src="/IPRAS.webp" alt="IPRAS" class="h-12 md:h-14 w-auto object-contain" />
+              </a>
             </div>
           </div>
 
@@ -690,45 +727,7 @@ export default component$(() => {
       )}
 
 
-      {/* ─── Trust Band ─── */}
-      <section class="bg-white py-16 border-t border-stone-100">
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="flex flex-wrap justify-center items-center gap-12 md:gap-20">
-            <a
-              href="https://clinicacolon.com.ar/especialidades/cirugia-plastica/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
-            >
-              <img src="/clinicacolon.png" alt="Clínica Colón" class="h-12 md:h-14 w-auto object-contain" />
-            </a>
-            <a
-              href="https://www.sacper.org.ar/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
-            >
-              <img src="/sacper.webp" alt="SACPER" class="h-12 md:h-14 w-auto object-contain" />
-            </a>
-            <a
-              href="https://www.instagram.com/soc_cirugiaplastica_mdp/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
-            >
-              <img src="/sociedad-marplatense-de-cirujia-plastica.webp" alt="Sociedad Marplatense de Cirugía Plástica" class="h-12 md:h-14 w-auto object-contain" />
-            </a>
-            <a
-              href="https://www.ipras.org/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-center transition-transform hover:scale-105 opacity-70 hover:opacity-100"
-            >
-              <img src="/IPRAS.webp" alt="IPRAS" class="h-12 md:h-14 w-auto object-contain" />
-            </a>
-          </div>
-        </div>
-      </section>
+
 
     </div>
   );

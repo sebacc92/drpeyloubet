@@ -256,7 +256,7 @@ export default component$(() => {
                 onClick$={() => {
                   expandedId.value = isExpanded ? null : treatment.id;
                 }}
-                class="w-full flex items-center gap-4 p-5 text-left hover:bg-stone-50 transition-colors cursor-pointer"
+                class="w-full flex items-center gap-4 p-5 text-left hover:bg-stone-50 transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
                 {/* Thumbnail */}
                 <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center">
@@ -310,234 +310,257 @@ export default component$(() => {
 
               {/* Expanded Content */}
               {isExpanded && (
-                <div class="border-t border-slate-100 p-6 space-y-8">
-                  {/* ─── Main Image ─── */}
-                  <div>
-                    <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                      <LuImage class="w-4 h-4" />
-                      Imagen Principal
-                    </h4>
-                    <div class="flex items-start gap-6">
-                      <div class="w-40 h-28 rounded-xl overflow-hidden bg-slate-100 shrink-0 flex items-center justify-center">
-                        {treatment.mainImageUrl ? (
-                          <img
-                            src={treatment.mainImageUrl}
-                            alt={treatment.name}
-                            width={160}
-                            height={112}
-                            class="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <span class="text-xs text-slate-300 text-center px-4">Sin imagen</span>
-                        )}
-                      </div>
-                      <div>
-                        <label class="inline-flex items-center gap-2 cursor-pointer rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 transition-colors">
-                          {uploading.value === treatment.slug ? (
-                            <LuLoader2 class="w-4 h-4 animate-spin" />
-                          ) : (
-                            <LuUpload class="w-4 h-4" />
-                          )}
-                          {treatment.mainImageUrl ? "Reemplazar" : "Subir Imagen"}
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            class="hidden"
-                            onChange$={async (e) => {
-                              const input = e.target as HTMLInputElement;
-                              const file = input.files?.[0];
-                              if (!file) return;
-                              if (file.size > 10 * 1024 * 1024) {
-                                showToast("error", "Archivo demasiado grande (máx 10MB)");
-                                return;
-                              }
-                              uploading.value = treatment.slug;
-                              try {
-                                const base64 = await fileToBase64(file);
-                                await uploadMainImage(treatment.slug, base64, file.name, file.type);
-                                showToast("success", `Imagen actualizada para ${treatment.name}`);
-                                // Reload page to see changes
-                                window.location.reload();
-                              } catch (err) {
-                                showToast("error", `Error: ${err instanceof Error ? err.message : "Upload failed"}`);
-                              } finally {
-                                uploading.value = null;
-                              }
-                            }}
-                          />
-                        </label>
-                        <p class="text-xs text-slate-400 mt-2">JPG, PNG, WebP o AVIF. Máx 10MB.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* ─── Before & After ─── */}
-                  <div>
-                    <h4 class="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-                      <LuImage class="w-4 h-4" />
-                      Casos Antes / Después ({treatment.beforeAfterImages.length})
-                    </h4>
-
-                    {/* Existing pairs */}
-                    {treatment.beforeAfterImages.length > 0 && (
-                      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        {treatment.beforeAfterImages.map((pair) => (
-                          <div
-                            key={pair.id}
-                            class="bg-stone-50 rounded-xl overflow-hidden border border-stone-200"
-                          >
-                            <div class="flex aspect-[2/1]">
-                              <div class="w-1/2 relative border-r border-stone-200">
-                                <img
-                                  src={pair.beforeImageUrl}
-                                  alt="Antes"
-                                  width={200}
-                                  height={200}
-                                  class="w-full h-full object-cover"
-                                />
-                                <div class="absolute top-2 left-2 bg-slate-900/70 px-2 py-0.5 rounded text-[9px] font-bold text-white uppercase">
-                                  Antes
-                                </div>
+                <div class="border-t border-slate-100 p-6 md:p-8 bg-slate-50/50">
+                  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    {/* ─── Main Image Column (Left) ─── */}
+                    <div class="lg:col-span-4 space-y-4">
+                      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <h4 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                          <LuImage class="w-4 h-4 text-blue-600" />
+                          Imagen Principal
+                        </h4>
+                        
+                        <div class="flex flex-col gap-4">
+                          <div class="w-full aspect-[4/3] rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200">
+                            {treatment.mainImageUrl ? (
+                              <img
+                                src={treatment.mainImageUrl}
+                                alt={treatment.name}
+                                class="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div class="flex flex-col items-center gap-2 text-slate-400">
+                                <LuImage class="w-8 h-8 opacity-50" />
+                                <span class="text-xs font-medium">Sin imagen</span>
                               </div>
-                              <div class="w-1/2 relative">
-                                <img
-                                  src={pair.afterImageUrl}
-                                  alt="Después"
-                                  width={200}
-                                  height={200}
-                                  class="w-full h-full object-cover"
-                                />
-                                <div class="absolute top-2 right-2 bg-white/90 px-2 py-0.5 rounded text-[9px] font-bold text-slate-900 uppercase">
-                                  Después
+                            )}
+                          </div>
+                          
+                          <div>
+                            <label class="relative flex w-full cursor-pointer appearance-none items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-white p-4 transition-all hover:border-slate-400 hover:bg-slate-50">
+                              <div class="flex flex-col items-center space-y-1 text-center">
+                                {uploading.value === treatment.slug ? (
+                                  <LuLoader2 class="h-6 w-6 animate-spin text-blue-600" />
+                                ) : (
+                                  <LuUpload class="h-6 w-6 text-slate-400" />
+                                )}
+                                <div class="text-sm font-medium text-slate-700">
+                                  {treatment.mainImageUrl ? "Reemplazar imagen" : "Subir imagen"}
                                 </div>
+                                <p class="text-xs text-slate-500">JPG, PNG, WebP. Máx 10MB.</p>
                               </div>
-                            </div>
-                            <div class="p-3 flex items-center justify-between">
-                              <p class="text-xs text-slate-500 italic truncate flex-1">
-                                {pair.caption || "Sin descripción"}
-                              </p>
-                              <button
-                                type="button"
-                                disabled={deletingId.value === pair.id}
-                                onClick$={async () => {
-                                  if (!confirm("¿Eliminar este caso de antes/después?")) return;
-                                  deletingId.value = pair.id;
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/avif"
+                                class="sr-only"
+                                onChange$={async (e) => {
+                                  const input = e.target as HTMLInputElement;
+                                  const file = input.files?.[0];
+                                  if (!file) return;
+                                  if (file.size > 10 * 1024 * 1024) {
+                                    showToast("error", "Archivo demasiado grande (máx 10MB)");
+                                    return;
+                                  }
+                                  uploading.value = treatment.slug;
                                   try {
-                                    await deleteBeforeAfter(pair.id);
-                                    showToast("success", "Caso eliminado");
+                                    const base64 = await fileToBase64(file);
+                                    await uploadMainImage(treatment.slug, base64, file.name, file.type);
+                                    showToast("success", `Imagen actualizada para ${treatment.name}`);
                                     window.location.reload();
                                   } catch (err) {
-                                    showToast("error", `Error: ${err instanceof Error ? err.message : "Delete failed"}`);
+                                    showToast("error", `Error: ${err instanceof Error ? err.message : "Upload failed"}`);
                                   } finally {
-                                    deletingId.value = null;
+                                    uploading.value = null;
                                   }
                                 }}
-                                class="ml-2 p-1.5 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-50"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* ─── Before & After Column (Right) ─── */}
+                    <div class="lg:col-span-8 space-y-4">
+                      <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center justify-between mb-4">
+                          <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <LuSparkles class="w-4 h-4 text-amber-500" />
+                            Casos Antes / Después
+                            <span class="bg-slate-100 text-slate-600 py-0.5 px-2 rounded-full text-xs ml-2">
+                              {treatment.beforeAfterImages.length}
+                            </span>
+                          </h4>
+                        </div>
+
+                        {/* Existing pairs */}
+                        {treatment.beforeAfterImages.length > 0 ? (
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            {treatment.beforeAfterImages.map((pair) => (
+                              <div
+                                key={pair.id}
+                                class="bg-slate-50 rounded-xl overflow-hidden border border-slate-200 group"
                               >
-                                {deletingId.value === pair.id ? (
-                                  <LuLoader2 class="w-3.5 h-3.5 animate-spin" />
-                                ) : (
-                                  <LuTrash2 class="w-3.5 h-3.5" />
-                                )}
-                              </button>
+                                <div class="flex aspect-[2/1]">
+                                  <div class="w-1/2 relative border-r border-white/20">
+                                    <img
+                                      src={pair.beforeImageUrl}
+                                      alt="Antes"
+                                      class="w-full h-full object-cover"
+                                    />
+                                    <div class="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider">
+                                      Antes
+                                    </div>
+                                  </div>
+                                  <div class="w-1/2 relative">
+                                    <img
+                                      src={pair.afterImageUrl}
+                                      alt="Después"
+                                      class="w-full h-full object-cover"
+                                    />
+                                    <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-slate-900 uppercase tracking-wider">
+                                      Después
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="p-3 flex items-center justify-between bg-white border-t border-slate-100">
+                                  <p class="text-xs text-slate-500 font-medium truncate flex-1 pr-3" title={pair.caption || ""}>
+                                    {pair.caption || "Sin descripción"}
+                                  </p>
+                                  <button
+                                    type="button"
+                                    disabled={deletingId.value === pair.id}
+                                    onClick$={async () => {
+                                      if (!confirm("¿Seguro que querés eliminar este caso?")) return;
+                                      deletingId.value = pair.id;
+                                      try {
+                                        await deleteBeforeAfter(pair.id);
+                                        showToast("success", "Caso eliminado exitosamente");
+                                        window.location.reload();
+                                      } catch (err) {
+                                        showToast("error", `Error: ${err instanceof Error ? err.message : "Delete failed"}`);
+                                      } finally {
+                                        deletingId.value = null;
+                                      }
+                                    }}
+                                    class="p-1.5 rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600 transition-colors disabled:opacity-50 flex-shrink-0"
+                                    title="Eliminar caso"
+                                  >
+                                    {deletingId.value === pair.id ? (
+                                      <LuLoader2 class="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <LuTrash2 class="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div class="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200 mb-6">
+                            <LuImage class="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                            <p class="text-sm text-slate-500">No hay casos cargados para este tratamiento.</p>
+                          </div>
+                        )}
+
+                        {/* Upload new pair form */}
+                        <div class="bg-blue-50/50 rounded-xl border border-blue-100 p-5">
+                          <h5 class="text-sm font-semibold text-blue-900 mb-4 flex items-center gap-2">
+                            <LuPlus class="w-4 h-4" />
+                            Agregar nuevo caso
+                          </h5>
+                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Foto "Antes"</label>
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/avif"
+                                id={`before-${treatment.slug}`}
+                                class="w-full text-xs file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white file:text-slate-700 hover:file:bg-slate-50 file:cursor-pointer border border-slate-200 rounded-md bg-white text-slate-500 shadow-sm"
+                              />
+                            </div>
+                            <div>
+                              <label class="block text-xs font-semibold text-slate-700 mb-1.5">Foto "Después"</label>
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp,image/avif"
+                                id={`after-${treatment.slug}`}
+                                class="w-full text-xs file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-white file:text-slate-700 hover:file:bg-slate-50 file:cursor-pointer border border-slate-200 rounded-md bg-white text-slate-500 shadow-sm"
+                              />
                             </div>
                           </div>
-                        ))}
+                          <div class="mb-4">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Descripción breve (opcional)</label>
+                            <input
+                              type="text"
+                              id={`caption-${treatment.slug}`}
+                              placeholder="Ej: Paciente femenina, resultado a los 6 meses"
+                              class="w-full rounded-md border border-slate-300 px-3 py-2 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-shadow"
+                            />
+                          </div>
+                          <div class="flex justify-end">
+                            <button
+                              type="button"
+                              disabled={uploadingBA.value === treatment.slug}
+                              onClick$={async () => {
+                                const beforeInput = document.getElementById(`before-${treatment.slug}`) as HTMLInputElement;
+                                const afterInput = document.getElementById(`after-${treatment.slug}`) as HTMLInputElement;
+                                const captionInput = document.getElementById(`caption-${treatment.slug}`) as HTMLInputElement;
+
+                                const beforeFile = beforeInput?.files?.[0];
+                                const afterFile = afterInput?.files?.[0];
+
+                                if (!beforeFile || !afterFile) {
+                                  showToast("error", "Seleccioná ambas fotos (antes y después)");
+                                  return;
+                                }
+
+                                if (beforeFile.size > 10 * 1024 * 1024 || afterFile.size > 10 * 1024 * 1024) {
+                                  showToast("error", "Archivo demasiado grande (máx 10MB)");
+                                  return;
+                                }
+
+                                uploadingBA.value = treatment.slug;
+                                try {
+                                  const [beforeB64, afterB64] = await Promise.all([
+                                    fileToBase64(beforeFile),
+                                    fileToBase64(afterFile),
+                                  ]);
+
+                                  await uploadBeforeAfter(
+                                    treatment.slug,
+                                    beforeB64,
+                                    beforeFile.name,
+                                    beforeFile.type,
+                                    afterB64,
+                                    afterFile.name,
+                                    afterFile.type,
+                                    captionInput?.value || ""
+                                  );
+
+                                  showToast("success", "Caso antes/después agregado correctamente");
+                                  window.location.reload();
+                                } catch (err) {
+                                  showToast("error", `Error: ${err instanceof Error ? err.message : "Upload failed"}`);
+                                } finally {
+                                  uploadingBA.value = null;
+                                }
+                              }}
+                              class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 transition-all disabled:opacity-50 shadow-sm hover:shadow active:scale-95"
+                            >
+                              {uploadingBA.value === treatment.slug ? (
+                                <LuLoader2 class="w-4 h-4 animate-spin" />
+                              ) : (
+                                <LuUpload class="w-4 h-4" />
+                              )}
+                              Subir y Guardar Caso
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    )}
-
-                    {/* Upload new pair form */}
-                    <div class="bg-stone-50 rounded-xl border border-dashed border-stone-300 p-5">
-                      <p class="text-sm font-medium text-slate-700 mb-3 flex items-center gap-2">
-                        <LuPlus class="w-4 h-4" />
-                        Agregar nuevo caso
-                      </p>
-                      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                          <label class="block text-xs font-medium text-slate-500 mb-1">Foto "Antes"</label>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            id={`before-${treatment.slug}`}
-                            class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer"
-                          />
-                        </div>
-                        <div>
-                          <label class="block text-xs font-medium text-slate-500 mb-1">Foto "Después"</label>
-                          <input
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/avif"
-                            id={`after-${treatment.slug}`}
-                            class="w-full text-xs file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer"
-                          />
-                        </div>
-                        <div>
-                          <label class="block text-xs font-medium text-slate-500 mb-1">Descripción (opcional)</label>
-                          <input
-                            type="text"
-                            id={`caption-${treatment.slug}`}
-                            placeholder="Ej: Paciente femenina, 35 años"
-                            class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs shadow-sm placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/20 focus:outline-none"
-                          />
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        disabled={uploadingBA.value === treatment.slug}
-                        onClick$={async () => {
-                          const beforeInput = document.getElementById(`before-${treatment.slug}`) as HTMLInputElement;
-                          const afterInput = document.getElementById(`after-${treatment.slug}`) as HTMLInputElement;
-                          const captionInput = document.getElementById(`caption-${treatment.slug}`) as HTMLInputElement;
-
-                          const beforeFile = beforeInput?.files?.[0];
-                          const afterFile = afterInput?.files?.[0];
-
-                          if (!beforeFile || !afterFile) {
-                            showToast("error", "Seleccioná ambas fotos (antes y después)");
-                            return;
-                          }
-
-                          if (beforeFile.size > 10 * 1024 * 1024 || afterFile.size > 10 * 1024 * 1024) {
-                            showToast("error", "Archivo demasiado grande (máx 10MB)");
-                            return;
-                          }
-
-                          uploadingBA.value = treatment.slug;
-                          try {
-                            const [beforeB64, afterB64] = await Promise.all([
-                              fileToBase64(beforeFile),
-                              fileToBase64(afterFile),
-                            ]);
-
-                            await uploadBeforeAfter(
-                              treatment.slug,
-                              beforeB64,
-                              beforeFile.name,
-                              beforeFile.type,
-                              afterB64,
-                              afterFile.name,
-                              afterFile.type,
-                              captionInput?.value || ""
-                            );
-
-                            showToast("success", "Caso antes/después agregado");
-                            window.location.reload();
-                          } catch (err) {
-                            showToast("error", `Error: ${err instanceof Error ? err.message : "Upload failed"}`);
-                          } finally {
-                            uploadingBA.value = null;
-                          }
-                        }}
-                        class="mt-4 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-slate-800 transition-colors disabled:opacity-50"
-                      >
-                        {uploadingBA.value === treatment.slug ? (
-                          <LuLoader2 class="w-4 h-4 animate-spin" />
-                        ) : (
-                          <LuUpload class="w-4 h-4" />
-                        )}
-                        Subir Caso
-                      </button>
                     </div>
+
                   </div>
                 </div>
               )}

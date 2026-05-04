@@ -55,7 +55,7 @@ export const Chatbot = component$(() => {
         )}
         <button 
           onClick$={() => isOpen.value = !isOpen.value}
-          class={`relative p-4 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 ${isOpen.value ? 'bg-slate-800 text-stone-50' : 'bg-white text-blue-950 border border-stone-100'}`}
+          class={`relative flex items-center justify-center h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 ${isOpen.value ? 'bg-slate-800 text-stone-50' : 'bg-white text-blue-950 border border-stone-100'}`}
         >
           {!isOpen.value && (
             <span class="animate-ping absolute inset-0 rounded-full bg-white opacity-60"></span>
@@ -66,7 +66,7 @@ export const Chatbot = component$(() => {
 
       {/* Ventana de Chat */}
       {isOpen.value && (
-        <div class="fixed bottom-24 right-6 w-[90vw] max-w-sm bg-white rounded-2xl shadow-2xl border border-stone-200 z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div class="fixed bottom-[160px] sm:bottom-[180px] right-6 w-[90vw] max-w-sm bg-white rounded-2xl shadow-2xl border border-stone-200 z-50 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
           
           <div class="bg-slate-900 p-4 text-stone-50 flex justify-between items-center shadow-md z-10">
             <div class="flex items-center gap-3">

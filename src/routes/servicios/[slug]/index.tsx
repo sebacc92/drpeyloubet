@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, Link } from "@builder.io/qwik-city";
 import { eq } from "drizzle-orm";
-import { getDb, services, serviceImages } from "~/db";
+import { getDb, services, beforeAfterCases } from "~/db";
 import { LuArrowLeft } from "@qwikest/icons/lucide";
 
 export const useServiceDetail = routeLoader$(async (event) => {
@@ -20,8 +20,8 @@ export const useServiceDetail = routeLoader$(async (event) => {
 
   const images = await db
     .select()
-    .from(serviceImages)
-    .where(eq(serviceImages.serviceId, service.id));
+    .from(beforeAfterCases)
+    .where(eq(beforeAfterCases.serviceId, service.id));
 
   return { service, images };
 });
@@ -42,17 +42,15 @@ export default component$(() => {
 
       <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
         <div class="px-6 py-10 sm:px-10">
-          <span class="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mb-4">
-            {service.category}
-          </span>
+
           <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl mb-6">
             {service.title}
           </h1>
 
-          {service.contentHtml && (
+          {service.longText && (
             <div
               class="prose prose-slate max-w-none mb-10"
-              dangerouslySetInnerHTML={service.contentHtml}
+              dangerouslySetInnerHTML={service.longText}
             />
           )}
 
@@ -66,8 +64,8 @@ export default component$(() => {
                     class="overflow-hidden rounded-xl bg-slate-100 aspect-[4/3]"
                   >
                     <img
-                      src={img.imageUrl}
-                      alt={img.altText || service.title}
+                      src={img.imageAfterUrl}
+                      alt={img.description || service.title}
                       class="h-full w-full object-cover"
                       loading="lazy"
                       decoding="async"
