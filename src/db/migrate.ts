@@ -54,56 +54,7 @@ async function main() {
     console.log("ℹ️  Admin user already exists.");
   }
 
-  // 2. Seed default categories
-  const categoriesDb = await db.select().from(schema.categories);
-  if (categoriesDb.length === 0) {
-    const defaultCategories = [
-      { name: "Quirúrgicos", slug: "quirurgicos", description: "Procedimientos quirúrgicos estéticos y reconstructivos." },
-      { name: "Reparadoras", slug: "reparadoras", description: "Cirugías reparadoras y reconstructivas." },
-      { name: "No Quirúrgicos", slug: "no-quirurgicos", description: "Tratamientos estéticos no invasivos." },
-    ];
-    await db.insert(schema.categories).values(defaultCategories);
-    console.log(`✅ ${defaultCategories.length} default categories seeded.`);
-  } else {
-    console.log(`ℹ️  Categories already exist (${categoriesDb.length}).`);
-  }
-
-  // 3. Seed dummy services
-  const categoriesList = await db.select().from(schema.categories);
-  const quirurgicoId = categoriesList.find(c => c.slug === "quirurgicos")?.id;
-  const noQuirurgicoId = categoriesList.find(c => c.slug === "no-quirurgicos")?.id;
-
-  const servicesDb = await db.select().from(schema.services);
-  if (servicesDb.length === 0 && quirurgicoId && noQuirurgicoId) {
-    const defaultServices = [
-      {
-        slug: "aumento-mamario",
-        title: "Aumento Mamario",
-        description: "Mejora el volumen y forma de los senos con implantes de última generación.",
-        categoryId: quirurgicoId,
-        longText: "<p>El aumento mamario es uno de los procedimientos más solicitados en cirugía estética. Utilizamos implantes de la más alta calidad para lograr resultados naturales y armoniosos.</p>",
-      },
-      {
-        slug: "rinoplastia",
-        title: "Rinoplastia",
-        description: "Remodelación estética y funcional de la nariz.",
-        categoryId: quirurgicoId,
-        longText: "<p>La rinoplastia permite corregir tanto aspectos estéticos como funcionales de la nariz, mejorando la armonía facial y la respiración.</p>",
-      },
-      {
-        slug: "botox",
-        title: "Toxina Botulínica (Botox)",
-        description: "Rejuvenecimiento facial no quirúrgico para líneas de expresión.",
-        categoryId: noQuirurgicoId,
-        longText: "<p>La aplicación de toxina botulínica es un tratamiento rápido y efectivo para suavizar arrugas de expresión en frente, entrecejo y patas de gallo, con resultados visibles en pocos días.</p>",
-      }
-    ];
-
-    await db.insert(schema.services).values(defaultServices);
-    console.log(`✅ ${defaultServices.length} demo services seeded.`);
-  } else {
-    console.log(`ℹ️  Services already exist (${servicesDb.length}) or categories not found.`);
-  }
+  // 2. (Removed categories and services seeding as they are no longer in schema)
 }
 
 import { sql } from "drizzle-orm";

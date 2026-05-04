@@ -15,56 +15,6 @@ export const siteSettings = sqliteTable("site_settings", {
   value: text("value").notNull().default(""),
 });
 
-// ─── Categories ─────────────────────────────────────────
-export const categories = sqliteTable("categories", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  name: text("name").notNull(),
-  slug: text("slug").notNull().unique(),
-  description: text("description"),
-});
-
-export const categoriesRelations = relations(categories, ({ many }) => ({
-  services: many(services),
-}));
-
-// ─── Services ────────────────────────────────────────────
-export const services = sqliteTable("services", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  categoryId: integer("category_id").references(() => categories.id, { onDelete: "set null" }),
-  title: text("title").notNull(),
-  slug: text("slug").notNull().unique(),
-  description: text("description"),
-  longText: text("long_text"),
-  imageUrl: text("image_url"),
-  videoUrl: text("video_url"),
-  ctaText: text("cta_text").default("Agendar Turno").notNull(),
-});
-
-export const servicesRelations = relations(services, ({ one, many }) => ({
-  category: one(categories, {
-    fields: [services.categoryId],
-    references: [categories.id],
-  }),
-  beforeAfterCases: many(beforeAfterCases),
-  appointments: many(appointments),
-}));
-
-// ─── Before & After Cases ────────────────────────────────
-export const beforeAfterCases = sqliteTable("before_after_cases", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  serviceId: integer("service_id").references(() => services.id, { onDelete: "cascade" }),
-  description: text("description"),
-  imageBeforeUrl: text("image_before_url").notNull(),
-  imageAfterUrl: text("image_after_url").notNull(),
-  isFeatured: integer("is_featured", { mode: "boolean" }).default(false),
-});
-
-export const beforeAfterCasesRelations = relations(beforeAfterCases, ({ one }) => ({
-  service: one(services, {
-    fields: [beforeAfterCases.serviceId],
-    references: [services.id],
-  }),
-}));
 
 // ─── Appointments ────────────────────────────────────────
 export const appointments = sqliteTable("appointments", {
@@ -72,27 +22,44 @@ export const appointments = sqliteTable("appointments", {
   patientName: text("patient_name").notNull(),
   email: text("email"),
   phone: text("phone").notNull(),
-  serviceId: integer("service_id").references(() => services.id, { onDelete: "set null" }),
+  treatmentId: integer("treatment_id").references(() => treatments.id, { onDelete: "set null" }),
   type: text("type", { enum: ["presencial", "virtual"] }).notNull().default("presencial"),
   status: text("status", { enum: ["pending", "confirmed", "completed", "cancelled"] }).default("pending").notNull(),
   createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
 });
 
 export const appointmentsRelations = relations(appointments, ({ one }) => ({
-  service: one(services, {
-    fields: [appointments.serviceId],
-    references: [services.id],
+  treatment: one(treatments, {
+    fields: [appointments.treatmentId],
+    references: [treatments.id],
   }),
 }));
 
-// ─── Chat Logs (OpenAI) ──────────────────────────────────
-export const chatLogs = sqliteTable("chat_logs", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  sessionId: text("session_id").notNull(),
-  userMessage: text("user_message").notNull(),
-  botResponse: text("bot_response").notNull(),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`),
+// ─── Chat Sessions & Messages ──────────────────────────────
+export const chatSessions = sqliteTable("chat_sessions", {
+  id: text("id").primaryKey(),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+  lastActive: integer("last_active", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
 });
+
+export const chatMessages = sqliteTable("chat_messages", {
+  id: text("id").primaryKey(),
+  sessionId: text("session_id").references(() => chatSessions.id, { onDelete: "cascade" }).notNull(),
+  role: text("role", { enum: ["user", "assistant", "system"] }).notNull(),
+  content: text("content").notNull(),
+  createdAt: integer("created_at", { mode: "timestamp" }).default(sql`(unixepoch())`).notNull(),
+});
+
+export const chatSessionsRelations = relations(chatSessions, ({ many }) => ({
+  messages: many(chatMessages),
+}));
+
+export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
+  session: one(chatSessions, {
+    fields: [chatMessages.sessionId],
+    references: [chatSessions.id],
+  }),
+}));
 
 // ─── Treatments ──────────────────────────────────────────
 export const treatments = sqliteTable("treatments", {
@@ -111,6 +78,7 @@ export const treatments = sqliteTable("treatments", {
 
 export const treatmentsRelations = relations(treatments, ({ many }) => ({
   beforeAfterImages: many(treatmentBeforeAfter),
+  appointments: many(appointments),
 }));
 
 // ─── Treatment Before & After Images ─────────────────────

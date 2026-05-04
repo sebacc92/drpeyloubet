@@ -3,10 +3,10 @@ import { Form } from "@builder.io/qwik-city";
 
 interface BookingFormProps {
   action: any;
-  services: { id: number; title: string }[];
+  treatments: { id: number; name: string }[];
 }
 
-export const BookingForm = component$<BookingFormProps>(({ action, services }) => {
+export const BookingForm = component$<BookingFormProps>(({ action, treatments }) => {
   return (
     <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-stone-100 w-full max-w-lg mx-auto relative overflow-hidden">
       {/* Decorative top accent */}
@@ -57,15 +57,15 @@ export const BookingForm = component$<BookingFormProps>(({ action, services }) =
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 ml-1">Servicio de Interés <span class="text-rose-400">*</span></label>
+          <label class="block text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2 ml-1">Tratamiento de Interés <span class="text-rose-400">*</span></label>
           <div class="relative">
             <select 
-              name="serviceId" 
+              name="treatmentId" 
               required 
               class="w-full bg-stone-50 border border-stone-200 rounded-2xl px-5 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 focus:bg-white transition-all shadow-sm appearance-none cursor-pointer text-slate-700"
             >
               <option value="">Selecciona un tratamiento...</option>
-              {services.map(s => <option value={s.id} key={s.id}>{s.title}</option>)}
+              {treatments.map(t => <option value={t.id} key={t.id}>{t.name}</option>)}
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>

@@ -1,7 +1,7 @@
 import { component$, useSignal, $ } from "@builder.io/qwik";
-import { LuMessageCircle, LuX, LuSend, LuBot } from "@qwikest/icons/lucide";
+import { LuX, LuSend } from "@qwikest/icons/lucide";
 
-export const Chatbot = component$(() => {
+export const Chatbot = component$((props: { avatarUrl?: string }) => {
   const isOpen = useSignal(false);
   const messages = useSignal<{role: string, content: string}[]>([
     { role: "assistant", content: "Hola. Soy el asistente virtual de la clínica. ¿En qué puedo ayudarte a agendar tu cita hoy?" }
@@ -60,7 +60,7 @@ export const Chatbot = component$(() => {
           {!isOpen.value && (
             <span class="animate-ping absolute inset-0 rounded-full bg-white opacity-60"></span>
           )}
-          {isOpen.value ? <LuX class="w-6 h-6 relative z-10" /> : <LuBot class="w-6 h-6 relative z-10" />}
+          {isOpen.value ? <LuX class="w-6 h-6 relative z-10" /> : <img src={props.avatarUrl || "/logo.png"} alt="Chat" class="w-8 h-8 object-cover relative z-10 bg-white rounded-full" />}
         </button>
       </div>
 
@@ -70,8 +70,8 @@ export const Chatbot = component$(() => {
           
           <div class="bg-slate-900 p-4 text-stone-50 flex justify-between items-center shadow-md z-10">
             <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700">
-                <LuMessageCircle class="w-4 h-4 text-rose-200" />
+              <div class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-slate-700 overflow-hidden">
+                <img src={props.avatarUrl || "/logo.png"} alt="Avatar" class="w-full h-full object-cover bg-white" />
               </div>
               <div>
                 <h3 class="font-serif font-bold text-[15px] leading-tight">Asistente Premium</h3>

@@ -2,7 +2,7 @@ import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { routeLoader$, routeAction$, Link } from "@builder.io/qwik-city";
 import { LuArrowRight, LuStar, LuArrowRightCircle, LuArrowLeftCircle, LuSparkles, LuActivity, LuChevronDown, LuCalendarDays, LuVideo, LuSyringe } from "@qwikest/icons/lucide";
-import { getDb, services, categories, siteSettings, beforeAfterCases, appointments, treatments } from "~/db";
+import { getDb, siteSettings, appointments, treatments, treatmentBeforeAfter } from "~/db";
 import { eq, asc } from "drizzle-orm";
 
 // ─── Actions ──────────────────────────────────────────────
@@ -12,10 +12,10 @@ export const useBookingAction = routeAction$(async (data, event) => {
   const patientName = (data.name as string)?.trim();
   const phone = (data.phone as string)?.trim();
   const email = (data.email as string)?.trim() || null;
-  const serviceId = Number(data.serviceId);
+  const treatmentId = Number(data.treatmentId);
   const type = data.type as "presencial" | "virtual";
 
-  if (!patientName || !phone || isNaN(serviceId)) {
+  if (!patientName || !phone || isNaN(treatmentId)) {
     return { success: false, error: "Por favor, completa los campos requeridos." };
   }
 
@@ -24,16 +24,16 @@ export const useBookingAction = routeAction$(async (data, event) => {
       patientName,
       phone,
       email,
-      serviceId,
+      treatmentId,
       type,
       status: "pending"
     });
 
-    const [srv] = await db.select({ title: services.title }).from(services).where(eq(services.id, serviceId));
-    const serviceName = srv?.title || "Consulta General";
+    const [trt] = await db.select({ name: treatments.name }).from(treatments).where(eq(treatments.id, treatmentId));
+    const treatmentName = trt?.name || "Consulta General";
 
     const whatsappNumber = "5492230000000"; // TODO: Mover a settings o env
-    const message = `Hola, soy ${patientName}.\nSolicité un turno *${type}* para *${serviceName}* desde la web.`;
+    const message = `Hola, soy ${patientName}.\nSolicité un turno *${type}* para *${treatmentName}* desde la web.`;
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     throw event.redirect(302, url);
@@ -47,20 +47,17 @@ export const useBookingAction = routeAction$(async (data, event) => {
 export const useHomeData = routeLoader$(async (event) => {
   const db = getDb(event.env);
 
-  const cats = await db.select().from(categories).orderBy(categories.name);
-  const allServices = await db.select().from(services).orderBy(services.title);
-
   const featuredCases = await db
     .select({
-      id: beforeAfterCases.id,
-      description: beforeAfterCases.description,
-      imageBeforeUrl: beforeAfterCases.imageBeforeUrl,
-      imageAfterUrl: beforeAfterCases.imageAfterUrl,
-      serviceTitle: services.title,
+      id: treatmentBeforeAfter.id,
+      description: treatmentBeforeAfter.caption,
+      imageBeforeUrl: treatmentBeforeAfter.beforeImageUrl,
+      imageAfterUrl: treatmentBeforeAfter.afterImageUrl,
+      treatmentName: treatments.name,
     })
-    .from(beforeAfterCases)
-    .innerJoin(services, eq(beforeAfterCases.serviceId, services.id))
-    .where(eq(beforeAfterCases.isFeatured, true))
+    .from(treatmentBeforeAfter)
+    .innerJoin(treatments, eq(treatmentBeforeAfter.treatmentId, treatments.id))
+    .orderBy(treatmentBeforeAfter.displayOrder)
     .limit(6);
 
   const rows = await db.select().from(siteSettings);
@@ -82,11 +79,6 @@ export const useHomeData = routeLoader$(async (event) => {
     .orderBy(asc(treatments.displayOrder));
 
   return {
-    categories: cats.map((cat) => ({
-      ...cat,
-      services: allServices.filter(srv => srv.categoryId === cat.id)
-    })),
-    flatServices: allServices.map(s => ({ id: s.id, title: s.title })),
     featuredCases,
     treatments: allTreatments,
     hero: {
@@ -675,7 +667,7 @@ export default component$(() => {
                       <div class="w-1/2 relative border-r border-slate-900/50">
                         <img
                           src={c.imageBeforeUrl}
-                          alt={`Antes - ${c.serviceTitle}`}
+                          alt={`Antes - ${c.treatmentName}`}
                           width={600}
                           height={800}
                           loading="lazy"
@@ -689,7 +681,7 @@ export default component$(() => {
                       <div class="w-1/2 relative">
                         <img
                           src={c.imageAfterUrl}
-                          alt={`Después - ${c.serviceTitle}`}
+                          alt={`Después - ${c.treatmentName}`}
                           width={600}
                           height={800}
                           loading="lazy"
@@ -704,7 +696,7 @@ export default component$(() => {
 
                     <div class="p-6 md:p-8 bg-slate-800">
                       <div class="inline-block px-3 py-1 bg-slate-700 text-rose-200 text-xs font-semibold rounded-full mb-3 tracking-wide">
-                        {c.serviceTitle}
+                        {c.treatmentName}
                       </div>
                       {c.description && (
                         <p class="text-slate-300 md:text-lg leading-relaxed">
